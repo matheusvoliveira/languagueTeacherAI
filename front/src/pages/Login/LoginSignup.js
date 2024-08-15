@@ -375,9 +375,9 @@ const LoginSignup = () => {
             )}
             {showErrorAlert && <span className="alert-error">{message}</span>}
             <div className="form-link">
-              <button type="button" className="forgot-pass">
+              <p type="text" className="forgot-pass">
                 Forgot password?
-              </button>
+              </p>
             </div>
 
             <div className="field button-field">
@@ -396,7 +396,7 @@ const LoginSignup = () => {
               Don't have an account?{" "}
               <button
                 type="button"
-                className="link signup-link"
+                className="link signup-link buttons"
                 onClick={toggleForm}
               >
                 Signup
@@ -460,7 +460,7 @@ const LoginSignup = () => {
               Already have an account?{" "}
               <button
                 type="button"
-                className="link login-link"
+                className="link login-link buttons"
                 onClick={toggleForm}
               >
                 Login

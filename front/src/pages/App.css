@@ -1,8 +1,8 @@
 .App {
   text-align: center;
   display: flex;
-  background-color: #282c34;
-  color: white;
+  /* background-color: #282c34; */
+  /* color: white; */
   position: absolute;
   top: 0;
   bottom: 0;
@@ -84,7 +84,6 @@
   }
 }
 
-
 .chatbox {
   flex: 1;
   position: relative;
@@ -97,23 +96,21 @@
   padding: 24px;
   position: fixed;
   bottom: 0;
-  left: 15%;
+  left: 0;
   right: 0;
 }
 
 .chat-input-textarea {
-  background-color: #40414f;
-  width: 90%;
+  width: calc(100% - 48px); /* Adjust width to account for padding */
   padding: 12px;
-  color: white;
   font-size: 1.25em;
   border-radius: 5px;
-  border-color: none;
   border: none;
-  margin: 12px;
+  margin: 12px 0; /* Adjust margins to center within the holder */
   outline: none;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.25);
 }
+
 
 .chat-log {
   padding: 24px;
@@ -136,8 +133,8 @@
 }
 
 .chat-message.user {
-  background-color: #202123;
-  color: white;
+  background-color: rgb(226, 226, 226);
+  /* color: white; */
   border-radius: 5px;
   margin-bottom: 10px;
 }
@@ -160,7 +157,6 @@
 }
 
 .avatar.chatgpt {
-  background: #0da37f;
   border-radius: 50%;
   width: 40px;
   height: 40px;

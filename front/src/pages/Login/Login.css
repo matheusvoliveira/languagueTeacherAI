@@ -150,6 +150,21 @@ img.google-img,  img.google-img, .google-img{
     transform: translateY(-50%);
 }
 
+.buttons{
+    background-color: #016dcb;
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.forgot-pass{
+    color: black;
+    font-size: small;
+    text-decoration: underline;
+    cursor: pointer;
+
+}
 .alert-success {
     color: green;
     font-size: 13px;
