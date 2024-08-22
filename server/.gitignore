@@ -2,3 +2,5 @@
 .env
 node_modules/
 server/node_modules/
+server/serviceAccountKey.json
+serviceAccountKey.json

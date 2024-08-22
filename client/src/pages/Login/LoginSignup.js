@@ -6,7 +6,7 @@ import firebase from "../../firebase/firebaseConfig";
 
 const LoginSignup = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(""); 
   const [fullName, setFullName] = useState("");
 
   const [emailLogin, setEmailLogin] = useState("");
