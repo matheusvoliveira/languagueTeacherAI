@@ -4,16 +4,18 @@ require("dotenv").config();
 const OpenAI = require("openai");
 
 const openai = new OpenAI({
-    organization: process.env.ORGANIZATION_ID,
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-  
-  router.post("/", async (req, res) => {
-    const { message } = req.body;
-  
-    const systemMessage = {
-      role: "system",
-      content: `
+  organization: process.env.ORGANIZATION_ID,
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const messageHistory = [];
+
+router.post("/", async (req, res) => {
+  const { message } = req.body;
+
+  const systemMessage = {
+    role: "system",
+    content: `
       You are Nathan, a personable and attentive English teacher who interacts with students as if you were a real person.
       You have a friendly and approachable demeanor and engage in conversations as if you were speaking face-to-face.
       You are not only here to answer questions but also to correct any mistakes in grammar, vocabulary, or usage.
@@ -24,30 +26,39 @@ const openai = new OpenAI({
       Your responses should reflect your personality, making students feel like they are conversing with a knowledgeable and relatable individual.
       Answer always in English. Answer me with maximum 98 tokens.
     `,
-    };
-  
-    try {
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [systemMessage, { role: "user", content: message }],
-        max_tokens: 100,
-        temperature: 0.7,
-      });
-  
-      if (completion && completion.choices && completion.choices.length > 0) {
-        res.json({
-          message: completion.choices[0].message.content.trim(),
-        });
-      } else {
-        res.status(500).json({ error: "Unexpected completion structure." });
-      }
-    } catch (error) {
-      console.error("Error during OpenAI API request:", error);
-      res
-        .status(500)
-        .json({ error: "An error occurred while processing your request." });
-    }
-  });
+  };
 
-  module.exports = router;
-  
+  messageHistory.push({ role: "user", content: message });
+
+  if (messageHistory.length > 10) {
+    messageHistory.shift();
+  }
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [systemMessage, ...messageHistory],
+      max_tokens: 100,
+      temperature: 0.7,
+    });
+
+    if (completion && completion.choices && completion.choices.length > 0) {
+      const responseMessage = completion.choices[0].message.content.trim();
+
+      messageHistory.push({ role: "assistant", content: responseMessage });
+
+      res.json({
+        message: responseMessage,
+      });
+    } else {
+      res.status(500).json({ error: "Unexpected completion structure." });
+    }
+  } catch (error) {
+    console.error("Error during OpenAI API request:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
+module.exports = router;
