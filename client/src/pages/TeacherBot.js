@@ -11,12 +11,14 @@ function TeacherBot() {
       message: "I'm Nathan, your English teacher. How can I help you today?",
     },
   ]);
-  const messagesEndRef = useRef();
+  const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
+  const inputRef = useRef(null);
+
   async function handleSubmit(e) {
     if (input.trim()) {
       e.preventDefault();
-      let chatLogNew = [...chatLog, { user: "me", message: input }];
+      const chatLogNew = [...chatLog, { user: "me", message: input }];
       setInput("");
       setChatLog(chatLogNew);
 
@@ -41,12 +43,9 @@ function TeacherBot() {
         console.error(error);
       }
     }
-    console.log("Message sent:", input);
     setInput("");
   }
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  
   const handleChange = (e) => {
     setInput(e.target.value);
   };
@@ -60,13 +59,22 @@ function TeacherBot() {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Prevents the default action of Enter key (e.g., adding a new line)
       handleSubmit(e); // Submit form on Enter key press
     }
   };
 
-  // useEffect(() => {
-  //   scrollToBottom();
-  // }, [chatLog]);
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatLog]); // This effect will run whenever chatLog updates
+
+  useEffect(() => {
+    inputRef.current?.focus(); // Ensures the input is focused on component mount
+  }, []);
 
   return (
     <div className="App">
@@ -75,6 +83,8 @@ function TeacherBot() {
           {chatLog.map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))}
+          {/* This is where we ensure that the chat always scrolls to the bottom */}
+          <div ref={messagesEndRef} />
         </div>
 
         <div className="chat-input-holder">
@@ -86,7 +96,7 @@ function TeacherBot() {
               onKeyDown={handleKeyDown}
               className="chat-input-textarea"
               placeholder="Type your message here"
-              maxlength='100'
+              maxLength='100'
               rows="1"
               style={{ resize: "none", overflow: "hidden" }}
             />
