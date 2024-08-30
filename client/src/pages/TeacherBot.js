@@ -219,9 +219,15 @@ function TeacherBot() {
               >
                 Parar
               </button> */}
-              <button onClick={handleClick} className="chat-send-button">
+              {/* <button onClick={handleClick} className="chat-send-button">
                 {listening ? <FaMicrophone/> : <FaMicrophone/>}
       
+              </button> */}
+              <button
+                onClick={handleClick}
+                className="chat-send-button"
+              >
+                <FaMicrophone  style={{ color: listening ? "red" : "white" }} />
               </button>
               <p>
                 {listening
