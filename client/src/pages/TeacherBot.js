@@ -24,19 +24,76 @@ function TeacherBot() {
   const [recognition, setRecognition] = useState(null);
   const [audioUrl, setAudioUrl] = useState("");
 
+  // const handleAudio = async () => {
+  //   const chatLogNew = [...chatLog, { user: "me", message: transcript }];
+  //   setInput("");
+  //   setChatLog(chatLogNew);
+
+  //   try {
+  //     // Ensure `transcript` is defined and contains the message to send
+  //     if (!transcript) {
+  //       throw new Error("No transcript provided");
+  //     }
+
+  //     // Send a POST request with the transcript text
+  //     const response = await axios.post(
+  //       "http://localhost:3001/chatGpt/teste",
+  //       { message: transcript }, // Correctly passing transcript
+  //       {
+  //         responseType: "arraybuffer", // Handle binary data
+  //       }
+  //     );
+
+  //     // Convert response data (binary) to a blob
+  //     const audioBlob = new Blob([response.data], { type: "audio/mpeg" });
+
+  //     // Create a URL for the blob to play the audio
+  //     const audioUrl = URL.createObjectURL(audioBlob);
+  //     const { responseMessage } = response.data;
+  //     // Update chat log with new audio message
+  //     setChatLog([...chatLogNew, { user: "gpt", message: responseMessage  }]);
+
+  //     // Optionally, auto-play the audio
+  //     const audio = new Audio(audioUrl);
+  //     audio.play();
+  //   } catch (error) {
+  //     console.error("Error during audio processing:", error);
+  //   }
+  // };
   const handleAudio = async () => {
+    const chatLogNew = [...chatLog, { user: "me", message: transcript }];
+    setInput("");
+    setChatLog(chatLogNew);
+
     try {
+      if (!transcript) {
+        throw new Error("No transcript provided");
+      }
+
+      // Send a POST request with the transcript text
       const response = await axios.post(
         "http://localhost:3001/chatGpt/teste",
-        { text: transcript },
+        { message: transcript },
         {
-          responseType: "blob",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
-      const url = window.URL.createObjectURL(response.data);
-      setAudioUrl(url);
+
+      const { message, audio } = response.data;
+
+      // Create a URL for the audio blob
+      const audioUrl = audio;
+
+      // Update chat log with new message and audio URL
+      setChatLog([...chatLogNew, { user: "gpt", message: message }]);
+
+      // Optionally, auto-play the audio
+      const audioElement = new Audio(audioUrl);
+      audioElement.play();
     } catch (error) {
-      console.error("Error processing audio:", error);
+      console.error("Error during audio processing:", error);
     }
   };
 
@@ -89,30 +146,6 @@ function TeacherBot() {
       startListening();
     }
     setListening(!listening);
-  };
-
-  const handleStartRecording = () => {
-    setIsRecording(true);
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then((stream) => {
-        mediaRecorderRef.current = new MediaRecorder(stream);
-        mediaRecorderRef.current.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            audioChunksRef.current.push(event.data);
-          }
-        };
-        mediaRecorderRef.current.onstop = handleAudio;
-        mediaRecorderRef.current.start();
-      })
-      .catch((error) => {
-        console.error("Error accessing microphone:", error);
-      });
-  };
-
-  const handleStopRecording = () => {
-    setIsRecording(false);
-    mediaRecorderRef.current.stop();
   };
 
   async function handleSubmit(e) {
@@ -223,11 +256,8 @@ function TeacherBot() {
                 {listening ? <FaMicrophone/> : <FaMicrophone/>}
       
               </button> */}
-              <button
-                onClick={handleClick}
-                className="chat-send-button"
-              >
-                <FaMicrophone  style={{ color: listening ? "red" : "white" }} />
+              <button onClick={handleClick} className="chat-send-button">
+                <FaMicrophone style={{ color: listening ? "red" : "white" }} />
               </button>
               <p>
                 {listening

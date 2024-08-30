@@ -15,7 +15,7 @@ const openai = new OpenAI({
 
 
 const messageHistory = [];
-
+console.log(messageHistory)
 let systemMessage = {
   role: "system",
   content: `
@@ -65,41 +65,69 @@ router.post("/", async (req, res) => {
       .status(500)
       .json({ error: "An error occurred while processing your request." });
   }
+  console.log(messageHistory)
+
 });
 
-router.post("/audio", upload.single("audio"), async (req, res) => {
-  const audioFile = req.file;
-  if (!audioFile) {
-    return res.status(400).json({ error: "No audio file uploaded" });
+
+// router.post("/teste", async (req, res) => {
+//   const { message } = req.body;
+
+//   if (!message || typeof message !== 'string') {
+//     return res.status(400).json({ error: "Invalid or missing message content" });
+//   }
+
+//   // Add the user's message to history
+//   messageHistory.push({ role: "user", content: message });
+
+//   try {
+//     // Generate completion
+//     const completion = await openai.chat.completions.create({
+//       model: "gpt-4o-mini",
+//       messages: [systemMessage, ...messageHistory],
+//       max_tokens: 100,
+//       temperature: 0.7,
+//     });
+
+//     const responseMessage = completion.choices[0].message.content?.trim();
+//     if (!responseMessage) {
+//       return res.status(500).json({ error: "Empty response message from API" });
+//     }
+
+//     // Add response to history
+//     messageHistory.push({ role: "assistant", content: responseMessage });
+
+//     // Generate audio
+//     const mp3 = await openai.audio.speech.create({
+//       model: "tts-1",
+//       voice: "echo",
+//       input: responseMessage,
+//     });
+//     const buffer = Buffer.from(await mp3.arrayBuffer());
+//     console.log(messageHistory)
+
+//     res.set("Content-Type", "audio/mpeg");
+//     res.send(buffer);
+//     res.send(responseMessage);
+
+//   } catch (error) {
+//     console.error("Error during processing request:", error);
+//     res.status(500).json({ error: "An error occurred while processing your request." });
+//   }
+// });
+
+router.post("/teste", async (req, res) => {
+  const { message } = req.body;
+
+  if (!message || typeof message !== 'string') {
+    return res.status(400).json({ error: "Invalid or missing message content" });
   }
-  const audioPath = path.join(__dirname, "../uploads", audioFile.filename);
+
+  // Add the user's message to history
+  messageHistory.push({ role: "user", content: message });
 
   try {
-    // const audioPath = path.resolve(audioFile.path);
-    const audioPath = path.join(__dirname, "../uploads", audioFile.filename);
-
-    const transcriptionResponse = await axios.post(
-      "https://api.openai.com/v1/audio/transcriptions",
-      {
-        file: fs.createReadStream(audioPath),
-        model: "whisper-1", // Modelo da OpenAI para transcrição de áudio
-      },
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-      }
-    );
-
-    const transcribedText = transcriptionResponse.data.text;
-
-    messageHistory.push({ role: "user", content: transcribedText });
-
-    if (messageHistory.length > 10) {
-      messageHistory.shift();
-    }
-
+    // Generate completion
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [systemMessage, ...messageHistory],
@@ -107,58 +135,36 @@ router.post("/audio", upload.single("audio"), async (req, res) => {
       temperature: 0.7,
     });
 
-    if (completion && completion.choices && completion.choices.length > 0) {
-      const responseMessage = completion.choices[0].message.content.trim();
-
-      messageHistory.push({ role: "assistant", content: responseMessage });
-
-      res.json({
-        message: responseMessage,
-      });
-    } else {
-      res.status(500).json({ error: "Unexpected completion structure." });
+    const responseMessage = completion.choices[0].message.content?.trim();
+    if (!responseMessage) {
+      return res.status(500).json({ error: "Empty response message from API" });
     }
-  } catch (error) {
-    console.error(
-      "Error during processing request:",
-      error.response ? error.response.data : error.message
-    );
 
-    res
-      .status(500)
-      .json({ error: "An error occurred while processing your request." });
-  } finally {
-    fs.unlink(audioPath, (err) => {
-      if (err) console.error("Error deleting audio file:", err);
+    // Add response to history
+    messageHistory.push({ role: "assistant", content: responseMessage });
+
+    // Generate audio
+    const mp3 = await openai.audio.speech.create({
+      model: "tts-1",
+      voice: "echo",
+      input: responseMessage,
     });
+    const buffer = Buffer.from(await mp3.arrayBuffer());
+
+    // Convert audio buffer to base64 string
+    const audioBase64 = buffer.toString('base64');
+
+    // Send both text message and audio data
+    res.json({
+      message: responseMessage,
+      audio: `data:audio/mpeg;base64,${audioBase64}`,
+    });
+
+  } catch (error) {
+    console.error("Error during processing request:", error);
+    res.status(500).json({ error: "An error occurred while processing your request." });
   }
 });
 
-router.post("/teste", async (req, res) => {
-  let text = req.body.text
-
-  // try {
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    // messages: [systemMessage, ...messageHistory],
-    messages: [{ role: "system", content: text }],
-    max_tokens: 100,
-    temperature: 0.7,
-  });
-
-  const mp3 = await openai.audio.speech.create({
-    model: "tts-1",
-    voice: "echo",
-    input: completion.choices[0].message.content,
-  });
-  const buffer = Buffer.from(await mp3.arrayBuffer());
-
-  res.send(buffer)
-});
-
-router.post('/teste2', (req, res) => {
-  let text = req.body.text
-
-})
 
 module.exports = router;
