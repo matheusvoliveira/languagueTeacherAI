@@ -126,6 +126,10 @@ const LoginSignup = () => {
   const toggleForm = () => setShowSignup(!showSignup);
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
+  const handleReset = () => {
+    navigate('/reset')
+  }
+
   return (
     <section className={`container forms ${showSignup ? "show-signup" : ""}`}>
       <div className="form login">
@@ -159,7 +163,7 @@ const LoginSignup = () => {
             )}
             {showErrorAlert && <span className="alert-error">{message}</span>}
             <div className="form-link">
-              <p type="text" className="forgot-pass">
+              <p type="text" className="forgot-pass" onClick={handleReset}>
                 Forgot password?
               </p>
             </div>

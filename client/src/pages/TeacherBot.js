@@ -270,7 +270,7 @@ function TeacherBot() {
           </div>
         </div>
       </section>
-      );
+    
     </div>
   );
 }

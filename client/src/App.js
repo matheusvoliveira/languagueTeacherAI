@@ -5,6 +5,7 @@ import LoginSignup from "./pages/Login/LoginSignup";
 import Prices from "./pages/Prices";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
+import ForgotPassword from "./pages/ForgotPassword";
 function App() {
   return (
     <div className="App">
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginSignup />} />
           <Route path="/signup" element={<LoginSignup />} />
+          <Route path="/reset" element={<ForgotPassword />} />
           <Route path="/chat" element={<TeacherBot />} />
           <Route path="" element={<Prices />} />
           <Route path="/success" element={<Success />} />
