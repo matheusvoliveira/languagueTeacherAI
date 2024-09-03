@@ -1,6 +1,6 @@
 # .gitignore
-#.env
+.env
 node_modules/
 server/node_modules/
-# server/serviceAccountKey.json
-# serviceAccountKey.json
+server/serviceAccountKey.json
+serviceAccountKey.json
