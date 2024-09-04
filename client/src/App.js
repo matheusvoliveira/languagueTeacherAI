@@ -5,7 +5,7 @@ import LoginSignup from "./pages/Login/LoginSignup";
 import Prices from "./pages/prices/Prices";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
-import ForgotPassword from "./pages/ForgotPassword";
+import ForgotPassword from "../../client/src/pages/ForgotPassword/ForgotPassword"
 function App() {
   return (
     <div className="App">

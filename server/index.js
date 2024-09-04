@@ -9,7 +9,7 @@ const moment = require("moment/moment");
 const app = express();
 
 // Configuração CORS
-const allowedOrigins = ["http://localhost:3000", "http://localhost:5173"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:5173", "http://192.168.10.114:3000"];
 
 app.use(
   cors({
@@ -168,9 +168,16 @@ const chatGptRouter = require("./routes/chatGpt");
 
 app.use("/chatgpt", chatGptRouter);
 
-// Sincroniza o banco de dados e inicia o servidor
-db.sequelize.sync().then(() => {
-  app.listen(3001, () => {
-    console.log("Server running on port 3001");
-  });
+// // Sincroniza o banco de dados e inicia o servidor
+// db.sequelize.sync().then(() => {
+//   app.listen(3001, () => {
+//     console.log("Server running on port 3001");
+//   });
+// });
+
+// app.use(express.static('public')); // Serve static files from the 'public' directory
+
+
+app.listen(3001, '0.0.0.0', () => {
+  console.log(`Server is running on http://0.0.0.0:3001`);
 });

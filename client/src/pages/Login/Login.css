@@ -57,7 +57,7 @@ header {
     text-align: center;
 }
 
-form {
+.login-signup-form {
     margin-top: 30px;
     display: flex;
     flex-direction: column;

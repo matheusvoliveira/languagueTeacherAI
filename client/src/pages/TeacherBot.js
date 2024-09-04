@@ -189,11 +189,12 @@ function TeacherBot() {
               onChange={handleChange}
               onKeyDown={handleKeyDown}
               className="chat-input-textarea"
-              placeholder="Type your message here"
+              placeholder="Escreve sua mensagem aqui..."
               maxLength="100"
               rows="1"
               style={{ resize: "none", overflow: "hidden" }}
             />
+            <div className="send-mic-buttons"></div>
             <div className="chat-send-button-div">
               <button type="submit" className="chat-send-button">
                 <IoSendSharp style={{ color: "white" }} />
@@ -205,12 +206,11 @@ function TeacherBot() {
               <button onClick={handleClick} className="chat-send-button">
                 <FaMicrophone style={{ color: listening ? "red" : "white" }} />
               </button>
+              
               <p>
-                {listening
-                  ? "Ouvindo..."
-                  : "Clique em Iniciar para começar a ouvir"}
+                {listening}
               </p>
-              <p>Transcrição: {transcript}</p>
+              {/* <p>Transcrição: {transcript}</p> */}
               {audioUrl && <audio src={audioUrl} autoPlay />}
             </div>
           </div>

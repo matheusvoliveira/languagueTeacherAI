@@ -147,7 +147,7 @@ const LoginSignup = () => {
       <div className="form login">
         <div className="form-content">
           <header>Login</header>
-          <form action="#">
+          <form onSubmit={handleRegister} className="login-signup-form" >
             <div className="field input-field">
               <input
                 type="email"
@@ -210,7 +210,7 @@ const LoginSignup = () => {
       <div className="form signup">
         <div className="form-content">
           <header>Cadastro</header>
-          <form onSubmit={handleRegister}>
+          <form onSubmit={handleRegister} className="login-signup-form">
             <div className="field input-field">
               <input
                 className="inputRegister"

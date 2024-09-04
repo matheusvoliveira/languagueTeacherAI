@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/static/css/main.d46d7d5c.css",
+    "main.js": "/static/js/main.da0d1045.js",
+    "static/js/453.ed3810f9.chunk.js": "/static/js/453.ed3810f9.chunk.js",
+    "static/media/logo_teacherAI.jpeg": "/static/media/logo_teacherAI.a8df6e7a9c1f15a13633.jpeg",
+    "static/media/nathan.jpeg": "/static/media/nathan.00629a7d620af2d4c467.jpeg",
+    "index.html": "/index.html",
+    "main.d46d7d5c.css.map": "/static/css/main.d46d7d5c.css.map",
+    "main.da0d1045.js.map": "/static/js/main.da0d1045.js.map",
+    "453.ed3810f9.chunk.js.map": "/static/js/453.ed3810f9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d46d7d5c.css",
+    "static/js/main.da0d1045.js"
+  ]
+}
