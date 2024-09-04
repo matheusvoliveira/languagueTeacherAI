@@ -1,52 +1,3 @@
-// const express = require("express");
-// const router = express.Router();
-// require("dotenv").config();
-// const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-
-// const app = express();
-
-// app.set("View engine", "ejs");
-
-// app.get('/', async (req, res) => {
-//     res.render('index.ejs')
-// })
-// app.get("/subscribe", async (req, res) => {
-//   const plan = req.query.plan;
-
-//   if (!plan) {
-//     return res.send("Subscription plan not found");
-//   }
-
-//   let priceId;
-//   switch (plan.toLocaleLowerCase()) {
-//     case "monthly":
-//       priceId = "price_1PoRsmIqJPCcmdCBlSokDS0G";
-//       break;
-
-//     case "quarterly":
-//       priceId = "price_1PoUaFIqJPCcmdCBA5fAvZOv";
-//       break;
-
-//     default:
-//       return res.send("Subscription plan not found");
-//   }
-
-//   const session = await stripe.checkout.sessions.create({
-//     mode: "subscription",
-//     line_items: [
-//         {
-//             price: priceId,
-//             quantity: 1 
-//         }
-//     ],
-//     success_url: 'hhtp://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
-//     cancel_url: 'http://localhost:3000/cancel'
-//   });
-//   console.log(session)
-// });
-
-// module.exports = router;
-
 const express = require("express");
 const router = express.Router();
 require("dotenv").config();
@@ -55,10 +6,6 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const app = express();
 
 app.set("view engine", "ejs");
-
-// app.get('/', async (req, res) => {
-//     res.render('index.ejs');
-// });
 
 app.get("/", async (req, res) => {
   const plan = req.query.plan;

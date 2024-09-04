@@ -2,7 +2,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import TeacherBot from "./pages/TeacherBot";
 import LoginSignup from "./pages/Login/LoginSignup";
-import Prices from "./pages/Prices";
+import Prices from "./pages/prices/Prices";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
 import ForgotPassword from "./pages/ForgotPassword";

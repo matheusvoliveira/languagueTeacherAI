@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { FaFacebookF, FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
-import {  useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import firebase from "../../firebase/firebaseConfig";
+import InputMask from "react-input-mask";
 
 const LoginSignup = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); 
+  const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [tel, setTel] = useState("");
 
   const [emailLogin, setEmailLogin] = useState("");
   const [passwordLogin, setPasswordLogin] = useState("");
@@ -38,13 +40,13 @@ const LoginSignup = () => {
         setEmail("");
         setPassword("");
         console.log("entrou");
-        setMessage("Login right");
+        setMessage("Login realizado com sucesso!");
         setShowErrorAlert(false);
         setShowSuccessAlert(true);
         await navigate("/");
       }
     } catch (error) {
-      setMessage("Login error");
+      setMessage("Erro login!");
       setShowErrorAlert(true);
       setShowSuccessAlert(false);
     }
@@ -54,13 +56,13 @@ const LoginSignup = () => {
     event.preventDefault();
 
     if (password !== confirmPassword) {
-      setMessage("Passwords do not match");
+      setMessage("Senhas não coincidem!");
       setShowErrorAlert(true);
       setShowSuccessAlert(false);
       return;
     }
     if (password.length < 8) {
-      setMessage("Password must be at least 8 characters");
+      setMessage("Senha deve ter ao menos 8 caracteres!");
       setShowErrorAlert(true);
       setShowSuccessAlert(false);
       return;
@@ -71,12 +73,21 @@ const LoginSignup = () => {
     };
 
     if (!validateEmail(email)) {
-      setMessage("Email not valid");
+      setMessage("Email não é valido!");
       setShowErrorAlert(true);
       setShowSuccessAlert(false);
       return;
     }
 
+    const telDb = (tel) => {
+      return tel.replace(/[()-\s]/g, '');
+    }
+    if (tel.length < 10) {
+      setMessage("Telefone deve ter ao menos 8 digitos!");
+      setShowErrorAlert(true);
+      setShowSuccessAlert(false);
+      return;
+    }
     try {
       const response = await firebase
         .auth()
@@ -92,6 +103,7 @@ const LoginSignup = () => {
         await userRef.set({
           uid: uid,
           email: email,
+          tel: telDb(tel),
           username: fullName,
         });
 
@@ -99,7 +111,7 @@ const LoginSignup = () => {
         setEmail("");
         setPassword("");
 
-        setMessage("Registration successful! Redirecting...");
+        setMessage("Cadastro realizado com sucesso!");
         setShowSuccessAlert(true);
         setShowErrorAlert(false);
 
@@ -108,14 +120,14 @@ const LoginSignup = () => {
         }, 1000);
       }
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.error("Erro de registro!:", error);
 
       if (error.code === "auth/email-already-in-use") {
-        setMessage("Email already in use");
+        setMessage("Email já foi utilizado");
       } else if (error.code === "auth/weak-password") {
-        setMessage("Password is too weak");
+        setMessage("Senha muito fraca!");
       } else {
-        setMessage("Registration failed: " + error.message);
+        setMessage("Cadastro falhou: " + error.message);
       }
 
       setShowErrorAlert(true);
@@ -127,8 +139,8 @@ const LoginSignup = () => {
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const handleReset = () => {
-    navigate('/reset')
-  }
+    navigate("/reset");
+  };
 
   return (
     <section className={`container forms ${showSignup ? "show-signup" : ""}`}>
@@ -149,7 +161,7 @@ const LoginSignup = () => {
             <div className="field input-field">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Password"
+                placeholder="Senha"
                 className="password"
                 value={passwordLogin}
                 onChange={(e) => setPasswordLogin(e.target.value)}
@@ -164,7 +176,7 @@ const LoginSignup = () => {
             {showErrorAlert && <span className="alert-error">{message}</span>}
             <div className="form-link">
               <p type="text" className="forgot-pass" onClick={handleReset}>
-                Forgot password?
+                Esqueceu a senha?
               </p>
             </div>
 
@@ -181,13 +193,13 @@ const LoginSignup = () => {
 
           <div className="form-link">
             <span>
-              Don't have an account?{" "}
+              Não tem uma contat?{" "}
               <button
                 type="button"
                 className="link signup-link buttons"
                 onClick={toggleForm}
               >
-                Signup
+                Cadastrar
               </button>
             </span>
           </div>
@@ -197,15 +209,28 @@ const LoginSignup = () => {
       {/* Signup Form */}
       <div className="form signup">
         <div className="form-content">
-          <header>Signup</header>
+          <header>Cadastro</header>
           <form onSubmit={handleRegister}>
             <div className="field input-field">
               <input
                 className="inputRegister"
                 type="text"
-                placeholder="Full Name"
+                placeholder="Nome Completo"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
+              />
+            </div>
+            <div className="field input-field">
+              <InputMask
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="Telefone"
+                mask="(99) 99999-9999"
+                required
+                className="inputRegister"
+                value={tel}
+                onChange={(e) => setTel(e.target.value)}
               />
             </div>
             <div className="field input-field">
@@ -222,7 +247,7 @@ const LoginSignup = () => {
               <input
                 className="inputPassword"
                 type="password"
-                placeholder="Password"
+                placeholder="Senha"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -231,7 +256,7 @@ const LoginSignup = () => {
             <div className="field input-field">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Confirm password"
+                placeholder="Confirmar Senha"
                 className="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -246,15 +271,15 @@ const LoginSignup = () => {
             {showErrorAlert && <span className="alert-error">{message}</span>}
 
             <div className="field button-field">
-              <button className="buttonRegister" type="submit">
-                Signup
+              <button className="buttonRegister" type="Cadastro">
+                Cadastrar
               </button>
             </div>
           </form>
 
           <div className="form-link">
             <span>
-              Already have an account?{" "}
+              Já tem conta?{" "}
               <button
                 type="button"
                 className="link login-link buttons"

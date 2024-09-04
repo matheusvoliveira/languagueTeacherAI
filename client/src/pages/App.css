@@ -1,13 +1,12 @@
 .App {
   text-align: center;
   display: flex;
-  /* background-color: #282c34; */
-  /* color: white; */
   position: absolute;
   top: 0;
   bottom: 0;
   right: 0;
   left: 0;
+  background-color: white;
 }
 
 .sidemenu {
@@ -101,7 +100,8 @@
   left: 0;
   right: 0;
   background-color: #fff;  /* Optional: Background color for the holder */
-  z-index: 1000;          /* Makes sure the input area stays above other elements */
+  z-index: 1000;  
+  width: 100%;        /* Makes sure the input area stays above other elements */
 }
 form {
   display: flex;           
@@ -117,7 +117,9 @@ form {
   background-color: #fc8c04;
   border-radius: 50px;
   color: white;
-  margin-right: 10px;      
+  margin-right: 10px;    
+  width: 100%;        /* Makes sure the input area stays above other elements */
+  
 }
 
 .chat-input-textarea::placeholder {

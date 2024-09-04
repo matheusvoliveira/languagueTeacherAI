@@ -98,11 +98,7 @@ app.post("/api/v1/create-subscription-checkout-session", async (req, res) => {
 // Rota de sucesso de pagamento
 app.post("/api/v1/payment-success", async (req, res) => {
   const { sessionId, firebaseId } = req.body;
-  console.log("pagamento foi um sucesso");
-  console.log("pagamento foi um sucesso");
-  console.log("pagamento foi um sucesso");
-  console.log("pagamento foi um sucesso");
-  console.log("pagamento foi um sucesso");
+
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
