@@ -10,7 +10,7 @@
   }
   
   body{
-    /* background-color: #fc8c04; */
+    background-color: #fc8c04;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -22,6 +22,7 @@
     justify-content: space-around;
     width: min(1600px, 100%);
     margin: auto;
+    background-color: #0fbcf9;
   }
   
   .pricing-card{
