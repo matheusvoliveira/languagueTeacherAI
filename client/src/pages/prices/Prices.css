@@ -5,10 +5,12 @@
     font-family: "Open Sans",sans-serif;
     text-decoration: none;
     list-style: none;
+    /* background-color: #fc8c04; */
+
   }
   
   body{
-    background-color: #30336b;
+    /* background-color: #fc8c04; */
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -35,7 +37,7 @@
   }
   
   .pricing-card-header{
-    background-color: #0fbcf9;
+    background-color:#fc8c04;
     display: inline-block;
     color: #fff;
     padding: 12px 30px;
@@ -47,12 +49,12 @@
   }
   
   .pricing-card:hover .pricing-card-header{
-    box-shadow: 0 0 0 26em #0fbcf9;
+    box-shadow: 0 0 0 26em #fc8c04;
   }
   
   .price{
     font-size: 70px;
-    color: #0fbcf9;
+    color: #fc8c04;
     margin: 40px 0;
     transition: .2s linear;
   }
@@ -73,15 +75,15 @@
   }
 
   .promo{
-    background-color: red;
+    background-color: #0fbcf9;;
   }
   
   .order-btn{
     display: inline-block;
     margin-bottom: 40px;
     margin-top: 80px;
-    border: 2px solid #0fbcf9;
-    color: #0fbcf9;
+    border: 2px solid #fc8c04;
+    color: #fc8c04;
     padding: 18px 40px;
     border-radius: 8px;
     text-transform: uppercase;
@@ -90,7 +92,7 @@
   }
   
   .order-btn:hover{
-    background-color: #0fbcf9;
+    background-color: #fc8c04;
     color: #fff;
   }
   
