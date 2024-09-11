@@ -429,7 +429,7 @@ function TeacherBot() {
             <button onClick={handleClick} className="chat-send-button">
               <FaMicrophone style={{ color: listening ? "red" : "white" }} />
             </button>
-            <p>{listening ? "Listening..." : "Not listening"}</p>
+            <p>{listening ? "Listening..." : "ing"}</p>
             {audioUrl && <audio src={audioUrl} autoPlay />}
           </div>
         </div>
