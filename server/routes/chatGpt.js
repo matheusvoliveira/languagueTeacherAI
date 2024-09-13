@@ -1,121 +1,62 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-require("dotenv").config();
-const OpenAI = require("openai");
-const multer = require("multer");
-const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
-const upload = multer({ dest: path.join(__dirname, "../uploads") });
+const { OpenAI } = require('openai'); // Updated import for the latest SDK
+const getDatabase = require("../firebase/firebaseConfig");
 
+// Initialize OpenAI
 const openai = new OpenAI({
-  organization: process.env.ORGANIZATION_ID,
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY, // Ensure your OpenAI API key is in the .env file
 });
 
-const messageHistory = [];
-
-let systemMessage = {
-  role: "system",
-  content: `
-    You are Nathan, a personable and attentive English teacher who interacts with students as if you were a real person.
-    You have a friendly and approachable demeanor and engage in conversations as if you were speaking face-to-face.
-    You are not only here to answer questions but also to correct any mistakes in grammar, vocabulary, or usage.
-    When a student makes a mistake, you should gently correct them by explaining the error and providing the correct usage or phrase.
-    Ensure that corrections are made in a constructive manner to help the student learn from their mistakes.
-    You share your own opinions and preferences on various topics, making the learning experience engaging and personal.
-    Always provide clear, detailed, and understandable explanations, and ask thoughtful questions to prompt deeper thinking.
-    Your responses should reflect your personality, making students feel like they are conversing with a knowledgeable and relatable individual. 
-    If the person writes in other languages than english ask if he wants the answer in the specif language or english. Answer me with maximum 98 tokens.
-  `,
+// Function to retrieve user messages from Firebase
+const getUserMessagesFromFirebase = async (userUID) => {
+  const db = getDatabase(); 
+  const userMessagesRef = db.ref(`users/${userUID}/messages`);
+  
+  const snapshot = await userMessagesRef.once("value");
+  const messages = snapshot.val();
+  
+  if (!messages) return [];
+  
+  return Object.values(messages).map((msg) => ({
+    role: msg.sender === "me" ? "user" : "assistant",
+    content: msg.message,
+  }));
 };
 
-router.post("/", async (req, res) => {
-  const { message } = req.body;
-
-  messageHistory.push({ role: "user", content: message });
-
-  if (messageHistory.length > 10) {
-    messageHistory.shift();
-  }
+// Endpoint to send message to OpenAI
+router.post('/', async (req, res) => {
+  const { userUID, message } = req.body;
 
   try {
+    // Get user messages from Firebase
+    const userMessages = await getUserMessagesFromFirebase(userUID);
+
+    // Add new message to the chat history
+    userMessages.push({ role: "user", content: message });
+
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [systemMessage, ...messageHistory],
+      model: "gpt-3.5-turbo",
+      messages: userMessages,
       max_tokens: 100,
       temperature: 0.7,
     });
 
-    if (completion && completion.choices && completion.choices.length > 0) {
-      const responseMessage = completion.choices[0].message.content.trim();
+    const assistantMessage = completion.choices[0].message.content;
 
-      messageHistory.push({ role: "assistant", content: responseMessage });
+    // Store assistant's response in Firebase
+    const db = getDatabase();
+    const userMessagesRef = db.ref(`users/${userUID}/messages`);
+    await userMessagesRef.push({
+      sender: "assistant",
+      message: assistantMessage,
+      timestamp: Date.now(),
+    });
 
-      res.json({
-        message: responseMessage,
-      });
-    } else {
-      res.status(500).json({ error: "Unexpected completion structure." });
-    }
+    res.json({ message: assistantMessage });
   } catch (error) {
     console.error("Error during OpenAI API request:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while processing your request." });
-  }
-});
-
-router.post("/audio", async (req, res) => {
-  const { message } = req.body;
-
-  if (!message || typeof message !== "string") {
-    return res
-      .status(400)
-      .json({ error: "Invalid or missing message content" });
-  }
-
-  // Add the user's message to history
-  messageHistory.push({ role: "user", content: message });
-
-  try {
-    // Generate completion
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [systemMessage, ...messageHistory],
-      max_tokens: 100,
-      temperature: 0.7,
-    });
-
-    const responseMessage = completion.choices[0].message.content?.trim();
-    if (!responseMessage) {
-      return res.status(500).json({ error: "Empty response message from API" });
-    }
-
-    // Add response to history
-    messageHistory.push({ role: "assistant", content: responseMessage });
-
-    // Generate audio
-    const mp3 = await openai.audio.speech.create({
-      model: "tts-1",
-      voice: "echo",
-      input: responseMessage,
-    });
-    const buffer = Buffer.from(await mp3.arrayBuffer());
-
-    // Convert audio buffer to base64 string
-    const audioBase64 = buffer.toString("base64");
-
-    // Send both text message and audio data
-    res.json({
-      message: responseMessage,
-      audio: `data:audio/mpeg;base64,${audioBase64}`,
-    });
-  } catch (error) {
-    console.error("Error during processing request:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while processing your request." });
+    res.status(500).json({ error: "An error occurred while processing your request." });
   }
 });
 
