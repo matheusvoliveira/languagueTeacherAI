@@ -75,21 +75,24 @@ const TeacherBot = () => {
   // Load messages from Firebase on component mount
   useEffect(() => {
     const userUID = firebase.auth().currentUser?.uid;
-
+  
     if (userUID) {
       const userMessagesRef = firebase.database().ref(`users/${userUID}/messages`);
       const handleValueChange = (snapshot) => {
         const messages = snapshot.val();
         const chatHistory = messages ? Object.values(messages) : [];
-        setChatLog(chatHistory);
+        // Only update chatLog if it is empty, to avoid overwriting or duplicating messages
+        if (chatLog.length === 0) {
+          setChatLog(chatHistory);
+        }
       };
-
+  
       userMessagesRef.on("value", handleValueChange);
-
+  
       return () => userMessagesRef.off("value", handleValueChange);
     }
   }, []);
-
+  
   const handleChange = (e) => {
     setInput(e.target.value);
   };
@@ -130,20 +133,21 @@ const TeacherBot = () => {
     });
   };
 
-  // Handle text message submission
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (input.trim() && !isSubmitting) {
       setIsSubmitting(true);
       const chatLogNew = [...chatLog, { sender: "me", message: input }];
       setInput("");
       setChatLog(chatLogNew);
-
+  
       const userUID = firebase.auth().currentUser?.uid;
-
-      if (userUID) saveMessageToFirebase(userUID, input, "me");
-
+  
+      if (userUID) saveMessageToFirebase(userUID, input, "me");  // FIRST CALL: User message
+  
       try {
         const response = await fetch("http://localhost:3001/chatGpt", {
           method: "POST",
@@ -152,15 +156,15 @@ const TeacherBot = () => {
           },
           body: JSON.stringify({ message: input, userUID }),
         });
-
+  
         if (!response.ok) throw new Error("Error processing request.");
-
+  
         const data = await response.json();
         const gptMessage = data.message;
-
-        setChatLog([...chatLogNew, { sender: "gpt", message: gptMessage }]);
-
-        if (userUID) saveMessageToFirebase(userUID, gptMessage, "gpt");
+  
+        setChatLog([...chatLogNew, { user: "gpt", message: gptMessage }]);
+  
+        if (userUID) saveMessageToFirebase(userUID, gptMessage, "gpt");  // SECOND CALL: AI response
       } catch (error) {
         console.error(error);
       } finally {
@@ -168,41 +172,44 @@ const TeacherBot = () => {
       }
     }
   };
-
+  
   // Handle audio message submission
   const handleAudio = async () => {
     if (transcript.trim()) {
       const chatLogNew = [...chatLog, { sender: "me", message: transcript }];
       setInput("");
       setChatLog(chatLogNew);
-
+  
       const userUID = firebase.auth().currentUser?.uid;
-
+  
       if (userUID) saveMessageToFirebase(userUID, transcript, "me");
-
+  
       try {
         const response = await axios.post("http://localhost:3001/chatGpt/audio", {
           message: transcript,
+          userUID,
         });
-
+  
         const { message, audio } = response.data;
-
-        setChatLog([...chatLogNew, { sender: "gpt", message: message }]);
-
+  
+        setChatLog([...chatLogNew, { user: "gpt", message }]);
+  
         if (userUID) saveMessageToFirebase(userUID, message, "gpt");
-
-        const audioElement = new Audio(audio);
+  
+        // Play the audio
+        const audioElement = new Audio(audio);  // Ensure audio is the base64 string
         audioElement.play();
       } catch (error) {
         console.error("Error during audio processing:", error);
       }
     }
   };
+  
 
   return (
     <div className="App">
-      <section className="chatbox">
-        <div className="chat-log">
+      <section className="chatbox ">
+        <div className="chat-log ">
           {chatLog.map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))}
