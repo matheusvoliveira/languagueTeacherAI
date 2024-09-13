@@ -193,7 +193,7 @@ const LoginSignup = () => {
 
           <div className="form-link">
             <span>
-              Não tem uma contat?{" "}
+              Não tem uma conta?{" "}
               <button
                 type="button"
                 className="link signup-link buttons"
