@@ -6,7 +6,7 @@ import Prices from "./pages/prices/Prices";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
-import firebase from "./firebase/firebaseConfig"; // Firebase import
+import firebase from "./firebase/firebaseConfig"; // Assuming firebase is configured here
 
 function App() {
   const [user, setUser] = useState(null);
@@ -45,7 +45,9 @@ function App() {
           <Route path="/success" element={user ? <Success /> : <Navigate to="/login" />} />
           <Route path="/cancel" element={user ? <Cancel /> : <Navigate to="/login" />} />
           <Route path="/planos" element={user ? <Prices /> : <Navigate to="/login" />} />
-          <Route path="*" element={<Navigate to="/chat" />} />
+
+          {/* Catch-all route */}
+          <Route path="*" element={user ? <Navigate to="/chat" /> : <Navigate to="/login" />} />
         </Routes>
       </BrowserRouter>
     </div>

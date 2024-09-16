@@ -62,14 +62,14 @@ router.post('/', async (req, res) => {
     const assistantMessage = completion.choices[0].message.content;
 
     // Debugging log
-    console.log("Assistant's message:", assistantMessage);
+    // console.log("Assistant's message:", assistantMessage);
 
     // Store assistant's response in Firebase
     const db = getDatabase();
     const userMessagesRef = db.ref(`users/${userUID}/messages`);
 
     // Debugging log
-    console.log("Saving message to Firebase...");
+    // console.log("Saving message to Firebase...");
 
     // Ensure we're not duplicating messages
     const snapshot = await userMessagesRef.once("value");
