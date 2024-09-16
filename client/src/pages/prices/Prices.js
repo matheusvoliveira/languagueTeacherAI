@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import firebase from "../../firebase/firebaseConfig";
 import "./Prices.css";
+import axios from "axios"
 
 const data = [
   {
@@ -42,31 +43,29 @@ const Home = () => {
     return () => unsubscribe();
   }, []);
 
-  const checkout = (plan) => {
-    fetch("http://localhost:3001/api/v1/create-subscription-checkout-session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "cors",
-      body: JSON.stringify({ plan: plan, customerId: userId }),
-    })
-      .then((res) => {
-        if (res.ok) return res.json();
-        return res.json().then((json) => Promise.reject(json));
-      })
-      .then(({ session }) => {
-        if (session && session.url) {
-          window.location.href = session.url;
-        } else {
-          throw new Error("Invalid session response");
-        }
-      })
-      .catch((error) => {
-        console.error("Checkout error:", error);
-      });
-  };
+  const axiosInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
 
+  const checkout = async (plan) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/create-subscription-checkout-session', {
+        plan: plan,
+        customerId: userId
+      });
+  
+      // Handle response data
+      const { session } = response.data;
+      if (session && session.url) {
+        window.location.href = session.url;
+      } else {
+        throw new Error("Invalid session response");
+      }
+    } catch (error) {
+      // Handle error
+      console.error("Checkout error:", error.response?.data || error.message || 'An unknown error occurred');
+    }
+  };
   return (
     <div className="pricing-table">
       <div className="pricing-card">

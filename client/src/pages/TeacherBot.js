@@ -1,5 +1,3 @@
-
-
 import "./App.css";
 import React, { useState, useEffect, useRef } from "react";
 import firebase from "../firebase/firebaseConfig";
@@ -9,6 +7,9 @@ import { FaMicrophone } from "react-icons/fa";
 import ChatMessage from "./ChatMessage";
 
 const TeacherBot = () => {
+  const axiosInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   const [input, setInput] = useState("");
   const [chatLog, setChatLog] = useState([
     {
@@ -75,9 +76,11 @@ const TeacherBot = () => {
   // Load messages from Firebase on component mount
   useEffect(() => {
     const userUID = firebase.auth().currentUser?.uid;
-  
+
     if (userUID) {
-      const userMessagesRef = firebase.database().ref(`users/${userUID}/messages`);
+      const userMessagesRef = firebase
+        .database()
+        .ref(`users/${userUID}/messages`);
       const handleValueChange = (snapshot) => {
         const messages = snapshot.val();
         const chatHistory = messages ? Object.values(messages) : [];
@@ -86,13 +89,13 @@ const TeacherBot = () => {
           setChatLog(chatHistory);
         }
       };
-  
+
       userMessagesRef.on("value", handleValueChange);
-  
+
       return () => userMessagesRef.off("value", handleValueChange);
     }
   }, []);
-  
+
   const handleChange = (e) => {
     setInput(e.target.value);
   };
@@ -133,38 +136,33 @@ const TeacherBot = () => {
     });
   };
 
-  
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (input.trim() && !isSubmitting) {
       setIsSubmitting(true);
       const chatLogNew = [...chatLog, { sender: "me", message: input }];
       setInput("");
       setChatLog(chatLogNew);
-  
+
       const userUID = firebase.auth().currentUser?.uid;
-  
-      if (userUID) saveMessageToFirebase(userUID, input, "me");  // FIRST CALL: User message
-  
+
+      if (userUID) saveMessageToFirebase(userUID, input, "me"); // FIRST CALL: User message
+
       try {
-        const response = await fetch("http://localhost:3001/chatGpt", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message: input, userUID }),
+        const response = await axiosInstance.post("/chatGpt", {
+          message: input,
+          userUID,
         });
-  
+
         if (!response.ok) throw new Error("Error processing request.");
-  
+
         const data = await response.json();
         const gptMessage = data.message;
-  
+
         setChatLog([...chatLogNew, { user: "gpt", message: gptMessage }]);
-  
-        if (userUID) saveMessageToFirebase(userUID, gptMessage, "gpt");  // SECOND CALL: AI response
+
+        if (userUID) saveMessageToFirebase(userUID, gptMessage, "gpt"); // SECOND CALL: AI response
       } catch (error) {
         console.error(error);
       } finally {
@@ -172,39 +170,38 @@ const TeacherBot = () => {
       }
     }
   };
-  
+
   // Handle audio message submission
   const handleAudio = async () => {
     if (transcript.trim()) {
       const chatLogNew = [...chatLog, { sender: "me", message: transcript }];
       setInput("");
       setChatLog(chatLogNew);
-  
+
       const userUID = firebase.auth().currentUser?.uid;
-  
+
       if (userUID) saveMessageToFirebase(userUID, transcript, "me");
-  
+
       try {
-        const response = await axios.post("http://localhost:3001/chatGpt/audio", {
+        const response = await axiosInstance.post("/chatGpt/audio", {
           message: transcript,
           userUID,
         });
-  
+
         const { message, audio } = response.data;
-  
+
         setChatLog([...chatLogNew, { user: "gpt", message }]);
-  
+
         if (userUID) saveMessageToFirebase(userUID, message, "gpt");
-  
+
         // Play the audio
-        const audioElement = new Audio(audio);  // Ensure audio is the base64 string
+        const audioElement = new Audio(audio); // Ensure audio is the base64 string
         audioElement.play();
       } catch (error) {
         console.error("Error during audio processing:", error);
       }
     }
   };
-  
 
   return (
     <div className="App">

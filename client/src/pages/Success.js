@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 // import success from "../assets/success.png"
 import firebase from "../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 const Success = () => {
  const navigate = useNavigate();
@@ -26,27 +28,26 @@ const Success = () => {
 
   console.log(sessionId)
 
-  const handlePaymentSuccess = () => {
-    fetch("http://localhost:3001/api/v1/payment-success", {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body: JSON.stringify({sessionId: sessionId, firebaseId: userId})
-    })
-    .then(res => {
-      if(res.ok) return res.json();
-      return res.json().then(json => Promise.reject(json));
-    })
-    .then(data => {
-      console.log(data.message);
-      navigate("/")
-    })
-    .catch(e => {
-      console.log(e.error);
-    });
-  }
+  const axiosInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
 
+ 
+const handlePaymentSuccess = async () => {
+  try {
+    const response = await axiosInstance.post('/api/v1/payment-success', {
+      sessionId: sessionId,
+      firebaseId: userId
+    });
+
+    // Handle response data
+    console.log(response.data.message);
+    navigate('/'); // Navigate to the home page or any other route
+  } catch (error) {
+    // Handle error
+    console.log(error.response?.data?.error || 'An error occurred');
+  }
+};
 
   return (
     <div className='m-0 p-0'>

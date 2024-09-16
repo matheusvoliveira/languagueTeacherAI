@@ -11,6 +11,7 @@ const app = express();
 // Configuração CORS
 const allowedOrigins = ["http://localhost:3000", "http://localhost:5173", "http://192.168.10.114:3000"];
 
+app.use(cors())
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -51,8 +52,8 @@ const stripeSession = async (plan) => {
           quantity: 1,
         },
       ],
-      success_url: "http://localhost:3000/success",
-      cancel_url: "http://localhost:3000/cancel",
+      success_url: "http://147.79.107.2/api/success",
+      cancel_url: "http://147.79.107.2/api/cancel",
     });
     return session;
   } catch (e) {
@@ -166,7 +167,7 @@ app.post("/api/v1/payment-success", async (req, res) => {
 const db = require("./models");
 const chatGptRouter = require("./routes/chatGpt");
 
-app.use("/chatgpt", chatGptRouter);
+app.use("api/chatgpt", chatGptRouter);
 
 // // Sincroniza o banco de dados e inicia o servidor
 // db.sequelize.sync().then(() => {
@@ -178,6 +179,6 @@ app.use("/chatgpt", chatGptRouter);
 // app.use(express.static('public')); // Serve static files from the 'public' directory
 
 
-app.listen(3001, '0.0.0.0', () => {
+app.listen(8800, '0.0.0.0', () => {
   console.log(`Server is running on http://0.0.0.0:3001`);
 });
