@@ -1,131 +1,25 @@
-import "./App.css";
-import React, { useState, useEffect, useRef } from "react";
-import firebase from "../firebase/firebaseConfig";
+import React, { useState, useEffect } from "react";
+import firebase from "../firebase/firebaseConfig"; // Importe sua configuração do Firebase
 import axios from "axios";
-import { IoSendSharp } from "react-icons/io5";
-import { FaMicrophone } from "react-icons/fa";
-import ChatMessage from "./ChatMessage";
 
 const TeacherBot = () => {
- const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://147.79.107.2/api/",
-});
   const [input, setInput] = useState("");
-  const [chatLog, setChatLog] = useState([
-    {
-      user: "gpt",
-      message: "I'm Nathan, your English teacher. How can I help you today?",
-    },
-  ]);
-  const [transcript, setTranscript] = useState("");
-  const [listening, setListening] = useState(false);
-  const [recognition, setRecognition] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const messagesEndRef = useRef(null);
-  const textareaRef = useRef(null);
-  const inputRef = useRef(null);
+  const [chatLog, setChatLog] = useState([]);
+  const [transcript, setTranscript] = useState(""); // Para mensagens de áudio
 
-  // Initialize Web Speech API for speech recognition
-  useEffect(() => {
-    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognitionInstance = new SpeechRecognition();
-      recognitionInstance.continuous = true;
-      recognitionInstance.interimResults = false;
-      recognitionInstance.lang = "en-US";
-
-      recognitionInstance.onresult = (event) => {
-        const transcriptArray = Array.from(event.results)
-          .map((result) => result[0].transcript)
-          .join("");
-        setTranscript(transcriptArray);
-      };
-
-      recognitionInstance.onend = () => {
-        setListening(false);
-      };
-
-      setRecognition(recognitionInstance);
-    } else {
-      alert("Navegador não suporta Web Speech API");
-    }
-  }, []);
-
-  // Start and stop listening for audio input
-  const startListening = () => {
-    if (recognition) recognition.start();
-    setListening(true);
-  };
-
-  const stopListening = () => {
-    if (recognition) recognition.stop();
-    setListening(false);
-  };
-
-  const handleClick = () => {
-    if (listening) {
-      stopListening();
-      handleAudio();
-    } else {
-      startListening();
-    }
-    setListening(!listening);
-  };
-
-  // Load messages from Firebase on component mount
   useEffect(() => {
     const userUID = firebase.auth().currentUser?.uid;
 
     if (userUID) {
-      const userMessagesRef = firebase
-        .database()
-        .ref(`users/${userUID}/messages`);
-      const handleValueChange = (snapshot) => {
+      const userMessagesRef = firebase.database().ref(`users/${userUID}/messages`);
+      userMessagesRef.on("value", (snapshot) => {
         const messages = snapshot.val();
         const chatHistory = messages ? Object.values(messages) : [];
-        // Only update chatLog if it is empty, to avoid overwriting or duplicating messages
-        if (chatLog.length === 0) {
-          setChatLog(chatHistory);
-        }
-      };
-
-      userMessagesRef.on("value", handleValueChange);
-
-      return () => userMessagesRef.off("value", handleValueChange);
+        setChatLog(chatHistory);
+      });
     }
   }, []);
 
-  const handleChange = (e) => {
-    setInput(e.target.value);
-  };
-
-  // Auto-grow textarea to fit content
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [input]);
-
-  // Send message on Enter key press
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
-    }
-  };
-
-  // Scroll to bottom when chatLog updates
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatLog]);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  // Save message to Firebase
   const saveMessageToFirebase = (uid, message, sender) => {
     const userMessagesRef = firebase.database().ref(`users/${uid}/messages`);
     const newMessageRef = userMessagesRef.push();
@@ -135,108 +29,101 @@ const TeacherBot = () => {
       timestamp: firebase.database.ServerValue.TIMESTAMP,
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (input.trim() && !isSubmitting) {
-      setIsSubmitting(true);
+  
+    if (input.trim()) {
       const chatLogNew = [...chatLog, { sender: "me", message: input }];
       setInput("");
       setChatLog(chatLogNew);
-
+  
       const userUID = firebase.auth().currentUser?.uid;
-
-      if (userUID) saveMessageToFirebase(userUID, input, "me"); // FIRST CALL: User message
-
+  
+      // Salvar a mensagem no Firebase
+      if (userUID) {
+        saveMessageToFirebase(userUID, input, "me");
+      }
+  
       try {
-        const response = await axiosInstance.post("/chatgpt", {
-          message: input,
-          userUID,
+        const response = await fetch("http://147.79.107.2/api/chatgpt", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: input, userUID }), // Include the userUID
         });
-
-        if (!response.ok) throw new Error("Error processing request.");
-
+  
+        if (!response.ok) {
+          throw new Error("An error occurred while processing the request.");
+        }
+  
         const data = await response.json();
         const gptMessage = data.message;
-
-        setChatLog([...chatLogNew, { user: "gpt", message: gptMessage }]);
-
-        if (userUID) saveMessageToFirebase(userUID, gptMessage, "gpt"); // SECOND CALL: AI response
+        setChatLog([...chatLogNew, { sender: "gpt", message: gptMessage }]);
+  
+        if (userUID) {
+          saveMessageToFirebase(userUID, gptMessage, "gpt");
+        }
       } catch (error) {
         console.error(error);
-      } finally {
-        setIsSubmitting(false);
       }
     }
   };
+  
 
-  // Handle audio message submission
   const handleAudio = async () => {
-    if (transcript.trim()) {
-      const chatLogNew = [...chatLog, { sender: "me", message: transcript }];
-      setInput("");
-      setChatLog(chatLogNew);
+    const chatLogNew = [...chatLog, { sender: "me", message: transcript }];
+    setInput("");
+    setChatLog(chatLogNew);
 
-      const userUID = firebase.auth().currentUser?.uid;
+    const userUID = firebase.auth().currentUser?.uid;
 
-      if (userUID) saveMessageToFirebase(userUID, transcript, "me");
+    // Salvar o áudio transcrito no Firebase
+    if (userUID) {
+      saveMessageToFirebase(userUID, transcript, "me");
+    }
 
-      try {
-        const response = await axiosInstance.post("/chatgpt/audio", {
-          message: transcript,
-          userUID,
-        });
+    try {
+      const response = await axios.post("http://147.79.107.2/api/chatgpt/audio", { message: transcript }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-        const { message, audio } = response.data;
+      const { message, audio } = response.data;
 
-        setChatLog([...chatLogNew, { user: "gpt", message }]);
+      setChatLog([...chatLogNew, { sender: "gpt", message: message }]);
 
-        if (userUID) saveMessageToFirebase(userUID, message, "gpt");
-
-        // Play the audio
-        const audioElement = new Audio(audio); // Ensure audio is the base64 string
-        audioElement.play();
-      } catch (error) {
-        console.error("Error during audio processing:", error);
+      // Salvar a resposta do GPT no Firebase
+      if (userUID) {
+        saveMessageToFirebase(userUID, message, "gpt");
       }
+
+      const audioElement = new Audio(audio);
+      audioElement.play();
+    } catch (error) {
+      console.error("Error during audio processing:", error);
     }
   };
 
   return (
-    <div className="App">
-      <section className="chatbox ">
-        <div className="chat-log ">
-          {chatLog.map((message, index) => (
-            <ChatMessage key={index} message={message} />
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <div className="chat-input-holder">
-          <form onSubmit={handleSubmit}>
-            <textarea
-              ref={textareaRef}
-              value={input}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-              className="chat-input-textarea"
-              placeholder="Escreva sua mensagem aqui...."
-              maxLength="100"
-              rows="1"
-              style={{ resize: "none", overflow: "hidden" }}
-            />
-            <div className="chat-send-button-div">
-              <button type="submit" className="chat-send-button">
-                <IoSendSharp style={{ color: "white" }} />
-              </button>
-            </div>
-          </form>
-          <button onClick={handleClick} className="chat-send-button">
-            <FaMicrophone style={{ color: listening ? "red" : "white" }} />
-          </button>
-        </div>
-      </section>
+    <div>
+      <div className="chat-log">
+        {chatLog.map((entry, index) => (
+          <div key={index} className={`message ${entry.sender}`}>
+            <p>{entry.message}</p>
+          </div>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit}>
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Type your message here"
+        />
+        <button type="submit">Send</button>
+      </form>
+      <button onClick={handleAudio}>Send Audio</button>
     </div>
   );
 };
