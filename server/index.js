@@ -167,7 +167,7 @@ app.post("/api/v1/payment-success", async (req, res) => {
 const db = require("./models");
 const chatGptRouter = require("./routes/chatGpt");
 
-app.use("api/chatgpt", chatGptRouter);
+app.use("/api/chatgpt", chatGptRouter);
 
 // // Sincroniza o banco de dados e inicia o servidor
 // db.sequelize.sync().then(() => {
