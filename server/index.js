@@ -173,14 +173,6 @@ const chatGptRouter = require("./routes/chatGpt");
 
 app.use("/api/chatgpt", chatGptRouter);
 
-// // Sincroniza o banco de dados e inicia o servidor
-// db.sequelize.sync().then(() => {
-//   app.listen(3001, () => {
-//     console.log("Server running on port 3001");
-//   });
-// });
-
-// app.use(express.static('public')); // Serve static files from the 'public' directory
 
 
 app.listen(8800, () => {
