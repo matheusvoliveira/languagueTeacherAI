@@ -8,7 +8,7 @@ import ChatMessage from "./ChatMessage";
 
 const TeacherBot = () => {
  const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://147.79.107.2/api/", 
+  baseURL: process.env.REACT_APP_API_URL, 
   const [input, setInput] = useState("");
   const [chatLog, setChatLog] = useState([
     {
