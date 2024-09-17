@@ -96,6 +96,10 @@ app.post("/api/v1/create-subscription-checkout-session", async (req, res) => {
   }
 });
 
+app.get("/api/teste", async (req, res) => {
+  res.json({ message: 'Está funcionando o teste' }); 
+});
+
 // Rota de sucesso de pagamento
 app.post("/api/v1/payment-success", async (req, res) => {
   const { sessionId, firebaseId } = req.body;
