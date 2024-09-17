@@ -220,7 +220,7 @@ const TeacherBot = () => {
               onChange={handleChange}
               onKeyDown={handleKeyDown}
               className="chat-input-textarea"
-              placeholder="Escreva sua mensagem aqui..."
+              placeholder="Escreva sua mensagem aqui...."
               maxLength="100"
               rows="1"
               style={{ resize: "none", overflow: "hidden" }}
