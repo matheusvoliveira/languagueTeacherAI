@@ -179,6 +179,6 @@ app.use("/api/chatgpt", chatGptRouter);
 // app.use(express.static('public')); // Serve static files from the 'public' directory
 
 
-app.listen(8800, '0.0.0.0', () => {
+app.listen(8800, () => {
   console.log(`Server is running on http://0.0.0.0:3001`);
 });
