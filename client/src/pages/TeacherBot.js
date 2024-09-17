@@ -149,7 +149,7 @@ const TeacherBot = () => {
       if (userUID) saveMessageToFirebase(userUID, input, "me"); // FIRST CALL: User message
 
       try {
-        const response = await axiosInstance.post("/chatGpt", {
+        const response = await axiosInstance.post("/chatgpt", {
           message: input,
           userUID,
         });
@@ -182,7 +182,7 @@ const TeacherBot = () => {
       if (userUID) saveMessageToFirebase(userUID, transcript, "me");
 
       try {
-        const response = await axiosInstance.post("/chatGpt/audio", {
+        const response = await axiosInstance.post("/chatgpt/audio", {
           message: transcript,
           userUID,
         });
