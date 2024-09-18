@@ -9,7 +9,8 @@ const moment = require("moment/moment");
 const app = express();
 
 // Configuração CORS
-const allowedOrigins = ["http://localhost:3000", "http://localhost:5173", "http://192.168.10.114:3000"];
+const allowedOrigins = ["http://nathanai.com.br", "http://www.nathanai.com.br", "http://147.79.107.2",];
+
 
 app.use(cors())
 app.use(
