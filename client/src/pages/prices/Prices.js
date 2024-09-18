@@ -43,13 +43,10 @@ const Home = () => {
     return () => unsubscribe();
   }, []);
 
-  const axiosInstance = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
-  });
 
   const checkout = async (plan) => {
     try {
-      const response = await axiosInstance.post('/api/v1/create-subscription-checkout-session', {
+      const response = await fetch('http://147.79.107.2/api/v1/create-subscription-checkout-session', {
         plan: plan,
         customerId: userId
       });

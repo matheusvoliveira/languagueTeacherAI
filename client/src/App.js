@@ -36,18 +36,27 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Public routes */}
-          <Route path="/login" element={user ? <Navigate to="/chat" /> : <LoginSignup />} />
+          <Route
+            path="/login"
+            element={user ? <Navigate to="/chat" /> : <LoginSignup />}
+          />
           <Route path="/signup" element={<LoginSignup />} />
           <Route path="/reset" element={<ForgotPassword />} />
+          <Route path="/planos" element={<Prices />} />
+          <Route path="/success" element={<Success />} />
+          <Route path="/cancel" element={<Cancel />} />
 
           {/* Protected routes */}
-          <Route path="/chat" element={user ? <TeacherBot /> : <Navigate to="/login" />} />
-          <Route path="/success" element={user ? <Success /> : <Navigate to="/login" />} />
-          <Route path="/cancel" element={user ? <Cancel /> : <Navigate to="/login" />} />
-          <Route path="/planos" element={user ? <Prices /> : <Navigate to="/login" />} />
+          <Route
+            path="/chat"
+            element={user ? <TeacherBot /> : <Navigate to="/login" />}
+          />
 
           {/* Catch-all route */}
-          <Route path="*" element={user ? <Navigate to="/chat" /> : <Navigate to="/login" />} />
+          <Route
+            path="*"
+            element={user ? <Navigate to="/chat" /> : <Navigate to="/login" />}
+          />
         </Routes>
       </BrowserRouter>
     </div>
