@@ -26,10 +26,10 @@ function App() {
     return () => unsubscribe(); // Cleanup the listener on unmount
   }, []);
 
-  if (loading) {
-    // While checking for user authentication state, show a loading spinner or message
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   // While checking for user authentication state, show a loading spinner or message
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <div className="App">
