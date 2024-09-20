@@ -185,7 +185,7 @@ const TeacherBot = () => {
       if (userUID) saveMessageToFirebase(userUID, transcript, "me");
   
       try {
-        const response = await axios.post("https://www.nathanai.com.br/api/chatgpt", {
+        const response = await axios.post("https://www.nathanai.com.br/api/chatgpt/audio", {
           message: transcript,
           userUID,
         });
