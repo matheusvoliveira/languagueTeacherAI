@@ -149,7 +149,7 @@ const TeacherBot = () => {
       if (userUID) saveMessageToFirebase(userUID, input, "me");  // FIRST CALL: User message
   
       try {
-        const response = await fetch("http://nathanai.com.br/api/chatgpt", {
+        const response = await fetch("https://nathanai.com.br/api/chatgpt", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
