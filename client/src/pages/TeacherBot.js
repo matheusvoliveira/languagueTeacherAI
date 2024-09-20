@@ -149,7 +149,7 @@ const TeacherBot = () => {
       if (userUID) saveMessageToFirebase(userUID, input, "me");  // FIRST CALL: User message
   
       try {
-        const response = await fetch("http://147.79.107.2/api/chatgpt", {
+        const response = await fetch("https://www.nathanai.com.br/api/chatgpt", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -185,7 +185,7 @@ const TeacherBot = () => {
       if (userUID) saveMessageToFirebase(userUID, transcript, "me");
   
       try {
-        const response = await axios.post("http://147.79.107.2/api/chatgpt", {
+        const response = await axios.post("https://www.nathanai.com.br/api/chatgpt", {
           message: transcript,
           userUID,
         });
