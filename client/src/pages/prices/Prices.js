@@ -46,7 +46,7 @@ const Home = () => {
 
   const checkout = async (plan) => {
     try {
-      const response = await fetch('http://147.79.107.2/api/v1/create-subscription-checkout-session', {
+      const response = await fetch('https://www.nathanai.com.br/api/v1/create-subscription-checkout-session', {
         plan: plan,
         customerId: userId
       });

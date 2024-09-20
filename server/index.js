@@ -53,8 +53,8 @@ const stripeSession = async (plan) => {
           quantity: 1,
         },
       ],
-      success_url: "http://147.79.107.2/api/success",
-      cancel_url: "http://147.79.107.2/api/cancel",
+      success_url: "https://www.nathanai.com.br/api/success",
+      cancel_url: "https://www.nathanai.com.br//cancel",
     });
     return session;
   } catch (e) {
