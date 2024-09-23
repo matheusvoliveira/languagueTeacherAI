@@ -173,7 +173,9 @@ const db = require("./models");
 const chatGptRouter = require("./routes/chatGpt");
 
 app.use("/api/chatgpt", chatGptRouter);
-
+app.get("/api/chatgpt", async (req, res) => {
+  res.json({ message: 'Está funcionando o chatgpt' }); 
+});
 
 
 app.listen(8800, () => {
