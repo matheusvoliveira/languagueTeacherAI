@@ -150,6 +150,7 @@ const TeacherBot = () => {
         const response = await fetch(
           "https://nathanai.com.br:8800/api/chatgpt",
           {
+            mode: 'no-cors',
             method: "POST",
             headers: {
               "Content-Type": "application/json",
