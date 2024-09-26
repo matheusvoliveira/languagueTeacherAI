@@ -148,9 +148,9 @@ const TeacherBot = () => {
 
       try {
         const response = await fetch(
-          "https://nathanai.com.br:8800/api/chatgpt",
+          "https://www.nathanai.com.br/api/chatgpt",
           {
-            mode: 'no-cors',
+            // mode: 'no-cors',
             method: "POST",
             headers: {
               "Content-Type": "application/json",
