@@ -1,6 +1,6 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { OpenAI } = require('openai');
+const { OpenAI } = require("openai");
 const getDatabase = require("../firebase/firebaseConfig");
 
 // Initialize OpenAI
@@ -10,16 +10,16 @@ const openai = new OpenAI({
 
 // Function to retrieve user messages from Firebase
 const getUserMessagesFromFirebase = async (userUID) => {
-  const db = getDatabase(); 
+  const db = getDatabase();
   const userMessagesRef = db.ref(`users/${userUID}/messages`);
-  
+
   const snapshot = await userMessagesRef.once("value");
   const messages = snapshot.val();
-  
+
   if (!messages) return [];
-  
+
   return Object.values(messages)
-    .filter(msg => msg.message && typeof msg.message === 'string') // Filter out invalid messages
+    .filter((msg) => msg.message && typeof msg.message === "string") // Filter out invalid messages
     .map((msg) => ({
       role: msg.sender === "me" ? "user" : "assistant",
       content: msg.message,
@@ -42,7 +42,7 @@ let systemMessage = {
 };
 
 // Endpoint to send message to OpenAI
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   const { userUID, message } = req.body;
 
   try {
@@ -74,9 +74,11 @@ router.post('/', async (req, res) => {
     // Ensure we're not duplicating messages
     const snapshot = await userMessagesRef.once("value");
     const currentMessages = snapshot.val();
-    const currentMessagesArray = currentMessages ? Object.values(currentMessages) : [];
+    const currentMessagesArray = currentMessages
+      ? Object.values(currentMessages)
+      : [];
 
-    if (!currentMessagesArray.some(msg => msg.message === assistantMessage)) {
+    if (!currentMessagesArray.some((msg) => msg.message === assistantMessage)) {
       await userMessagesRef.push({
         sender: "assistant",
         message: assistantMessage,
@@ -89,24 +91,22 @@ router.post('/', async (req, res) => {
     res.json({ message: assistantMessage });
   } catch (error) {
     console.error("Error during OpenAI API request:", error);
-    res.status(500).json({ error: "An error occurred while processing your request." });
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
   }
 });
 
-router.post('/audio', async (req, res) => {
+router.post("/audio", async (req, res) => {
   const { userUID, message } = req.body;
-
-  if (!userUID || !message || typeof message !== "string") {
-    return res.status(400).json({ error: "Invalid or missing userUID or message content" });
-  }
 
   try {
     // Get user messages from Firebase
     const userMessages = await getUserMessagesFromFirebase(userUID);
-
+  
     // Add the user's message to chat history
     userMessages.push({ role: "user", content: message });
-
+  
     // Generate completion
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -114,15 +114,16 @@ router.post('/audio', async (req, res) => {
       max_tokens: 100,
       temperature: 0.7,
     });
-
+  
     const responseMessage = completion.choices[0].message.content?.trim();
+    
     if (!responseMessage) {
       return res.status(500).json({ error: "Empty response message from API" });
     }
-
+  
     // Add response to chat history
     userMessages.push({ role: "assistant", content: responseMessage });
-
+  
     // Generate audio
     const mp3 = await openai.audio.speech.create({
       model: "tts-1",
@@ -130,20 +131,18 @@ router.post('/audio', async (req, res) => {
       input: responseMessage,
     });
     const buffer = Buffer.from(await mp3.arrayBuffer());
-
-    // Convert audio buffer to base64 string
     const audioBase64 = buffer.toString("base64");
-
+  
     // Store assistant's response in Firebase
     const db = getDatabase();
     const userMessagesRef = db.ref(`users/${userUID}/messages`);
-
-    // Ensure we're not duplicating messages
+  
+    // Check for duplicates
     const snapshot = await userMessagesRef.once("value");
     const currentMessages = snapshot.val();
     const currentMessagesArray = currentMessages ? Object.values(currentMessages) : [];
-
-    if (!currentMessagesArray.some(msg => msg.message === responseMessage)) {
+  
+    if (!currentMessagesArray.some((msg) => msg.message === responseMessage)) {
       await userMessagesRef.push({
         sender: "assistant",
         message: responseMessage,
@@ -152,19 +151,18 @@ router.post('/audio', async (req, res) => {
     } else {
       console.log("Duplicate message detected; skipping save.");
     }
-
+  
     // Send both text message and audio data
     res.json({
       message: responseMessage,
       audio: `data:audio/mpeg;base64,${audioBase64}`,
     });
   } catch (error) {
-    console.error("Error during processing request:", error);
+    console.error("Error during processing request:", error.message);
     res.status(500).json({ error: "An error occurred while processing your request." });
   }
+  
+  
 });
 
-
 module.exports = router;
-
-

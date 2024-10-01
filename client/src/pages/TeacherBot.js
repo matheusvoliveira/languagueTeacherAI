@@ -21,6 +21,7 @@ const TeacherBot = () => {
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const inputRef = useRef(null);
+  const [isCooldown, setIsCooldown] = useState(false);
 
   // Initialize Web Speech API for speech recognition
   useEffect(() => {
@@ -61,13 +62,22 @@ const TeacherBot = () => {
   };
 
   const handleClick = () => {
+    if (isCooldown) return; // Prevent further clicks if in cooldown
+
     if (listening) {
       stopListening();
       handleAudio();
     } else {
       startListening();
     }
+
     setListening(!listening);
+    setIsCooldown(true); // Start cooldown
+
+    // Set a timeout to reset cooldown after 2 seconds
+    setTimeout(() => {
+      setIsCooldown(false);
+    }, 3500);
   };
 
   // Load messages from Firebase on component mount
@@ -150,7 +160,6 @@ const TeacherBot = () => {
         const response = await fetch(
           "https://www.nathanai.com.br/api/chatgpt",
           {
-            // mode: 'no-cors',
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -189,7 +198,7 @@ const TeacherBot = () => {
 
       try {
         const response = await axios.post(
-          "https://www.nathanai.com.br/api/chatgpt/audio",
+          "https://www.nathanai.com.br/api/chatgp/audio",
           {
             message: transcript,
             userUID,
@@ -205,6 +214,7 @@ const TeacherBot = () => {
         // Play the audio
         const audioElement = new Audio(audio); // Ensure audio is the base64 string
         audioElement.play();
+        setTranscript(""); // Clear the transcript after processing
       } catch (error) {
         console.error("Error during audio processing:", error);
       }
@@ -220,7 +230,6 @@ const TeacherBot = () => {
           ))}
           <div ref={messagesEndRef} />
         </div>
-
         <div className="chat-input-holder">
           <form onSubmit={handleSubmit}>
             <textarea
@@ -233,16 +242,21 @@ const TeacherBot = () => {
               maxLength="100"
               rows="1"
               style={{ resize: "none", overflow: "hidden" }}
-            />
-            <div className="chat-send-button-div">
-              <button type="submit" className="chat-send-button">
-                <IoSendSharp style={{ color: "white" }} />
-              </button>
-            </div>
+            />{" "}
           </form>
-          <button onClick={handleClick} className="chat-send-button">
-            <FaMicrophone style={{ color: listening ? "red" : "white" }} />
-          </button>
+          <div className="chat-send-button-div">
+            <button onClick={handleSubmit} className="chat-send-button">
+              <IoSendSharp style={{ color: "white" }} />
+            </button>
+            <button onClick={handleClick} className="chat-send-button">
+              <FaMicrophone style={{ color: listening ? "red" : "white" }} />
+            </button>
+            <div
+              className="transcript"
+              style={{ position: "absolute", left: "-9999px" }} // Move o conteúdo para fora da tela
+              dangerouslySetInnerHTML={{ __html: transcript }}
+            />
+          </div>
         </div>
       </section>
     </div>

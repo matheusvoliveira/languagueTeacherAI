@@ -182,13 +182,13 @@ app.get("/api/chatgpt", async (req, res) => {
   res.json({ message: 'Está funcionando o chatgpt' }); 
 });
 
-const options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/www.nathanai.com.br/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/www.nathanai.com.br/fullchain.pem'),
-};
+// const options = {
+//   key: fs.readFileSync('/etc/letsencrypt/live/www.nathanai.com.br/privkey.pem'),
+//   cert: fs.readFileSync('/etc/letsencrypt/live/www.nathanai.com.br/fullchain.pem'),
+// };
 
 app.listen(8800, () => {
-  console.log(`Server is running on http://0.0.0.0:3001`);
+  console.log(`Server is running on http://0.0.0.0:8800`);
 });
 
 
