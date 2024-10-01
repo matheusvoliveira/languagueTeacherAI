@@ -77,7 +77,7 @@ const TeacherBot = () => {
     // Set a timeout to reset cooldown after 2 seconds
     setTimeout(() => {
       setIsCooldown(false);
-    }, 1500);
+    }, 3500);
   };
 
   // Load messages from Firebase on component mount
@@ -198,7 +198,7 @@ const TeacherBot = () => {
 
       try {
         const response = await axios.post(
-          "https://www.nathanai.com.br/api/chatgp/audio",
+          "https://www.nathanai.com.br/api/chatgpt/audio",
           {
             message: transcript,
             userUID,
