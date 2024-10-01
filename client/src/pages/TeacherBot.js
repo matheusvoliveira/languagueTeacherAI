@@ -77,7 +77,7 @@ const TeacherBot = () => {
     // Set a timeout to reset cooldown after 2 seconds
     setTimeout(() => {
       setIsCooldown(false);
-    }, 3500);
+    }, 1500);
   };
 
   // Load messages from Firebase on component mount
