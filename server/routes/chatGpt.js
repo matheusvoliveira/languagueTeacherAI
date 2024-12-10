@@ -9,9 +9,9 @@ const openai = new OpenAI({
 });
 
 // Function to retrieve user messages from Firebase
-const getUserMessagesFromFirebase = async (userUID) => {
+const getUserMessagesFromFirebase = async (userUID, language_path) => {
   const db = getDatabase();
-  const userMessagesRef = db.ref(`users/${userUID}/messages`);
+  const userMessagesRef = db.ref(`users/${userUID}/messages/${language_path}`);
 
   const snapshot = await userMessagesRef.once("value");
   const messages = snapshot.val();
@@ -26,50 +26,48 @@ const getUserMessagesFromFirebase = async (userUID) => {
     }));
 };
 
-let systemMessage = {
-  role: "system",
-  content: `
-    You are Nathan, a personable and attentive English teacher who interacts with students as if you were a real person.
-    You have a friendly and approachable demeanor and engage in conversations as if you were speaking face-to-face.
-    You are not only here to answer questions but also to correct any mistakes in grammar, vocabulary, or usage.
-    When a student makes a mistake, you should gently correct them by explaining the error and providing the correct usage or phrase.
-    Ensure that corrections are made in a constructive manner to help the student learn from their mistakes.
-    You share your own opinions and preferences on various topics, making the learning experience engaging and personal.
-    Always provide clear, detailed, and understandable explanations, and ask thoughtful questions to prompt deeper thinking.
-    Your responses should reflect your personality, making students feel like they are conversing with a knowledgeable and relatable individual. 
-    If the person writes in other languages than english ask if he wants the answer in the specif language or english. Answer me with maximum 98 tokens.
-  `,
-};
+function createSystemMessage(language) {
+  const systemMessage = {
+    role: "system",
+    content: `
+      You are Nathan, a personable and attentive ${language} teacher who interacts with students as if you were a real person.
+      You have a friendly and approachable demeanor and engage in conversations as if you were speaking face-to-face.
+      You are not only here to answer questions but also to correct any mistakes in grammar, vocabulary, or usage.
+      When a student makes a mistake, you should gently correct them by explaining the error and providing the correct usage or phrase.
+      Ensure that corrections are made in a constructive manner to help the student learn from their mistakes.
+      You share your own opinions and preferences on various topics, making the learning experience engaging and personal.
+      Always provide clear, detailed, and understandable explanations, and ask thoughtful questions to prompt deeper thinking.
+      Your responses should reflect your personality, making students feel like they are conversing with a knowledgeable and relatable individual.
+      If the person writes in other languages than ${language}, answer then in  ${language}. Do not answer in other language there is not ${language} please Answer me with a maximum of 98 tokens.
+    `,
+  };
+
+  return systemMessage;
+}
 
 // Endpoint to send message to OpenAI
 router.post("/", async (req, res) => {
   const { userUID, message } = req.body;
-
+  const language_path = "english"
   try {
     // Get user messages from Firebase
-    const userMessages = await getUserMessagesFromFirebase(userUID);
+    const userMessages = await getUserMessagesFromFirebase(userUID, language_path);
 
     // Add new message to the chat history
     userMessages.push({ role: "user", content: message });
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [systemMessage, ...userMessages],
+      messages: [createSystemMessage("english"), ...userMessages],
       max_tokens: 100,
       temperature: 1.0,
     });
 
     const assistantMessage = completion.choices[0].message.content;
 
-    // Debugging log
-    // console.log("Assistant's message:", assistantMessage);
-
     // Store assistant's response in Firebase
     const db = getDatabase();
-    const userMessagesRef = db.ref(`users/${userUID}/messages`);
-
-    // Debugging log
-    // console.log("Saving message to Firebase...");
+    const userMessagesRef = db.ref(`users/${userUID}/messages/${language_path}`);
 
     // Ensure we're not duplicating messages
     const snapshot = await userMessagesRef.once("value");
@@ -96,6 +94,56 @@ router.post("/", async (req, res) => {
       .json({ error: "An error occurred while processing your request." });
   }
 });
+
+router.post("/italian", async (req, res) => {
+  const { userUID, message } = req.body;
+  const language_path = 'italian'
+  try {
+    // Get user messages from Firebase
+    const userMessages = await getUserMessagesFromFirebase(userUID, language_path);
+
+    // Add new message to the chat history
+    userMessages.push({ role: "user", content: message });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [createSystemMessage("italian"), ...userMessages],
+      max_tokens: 100,
+      temperature: 1.0,
+    });
+
+    const assistantMessage = completion.choices[0].message.content;
+
+    // Store assistant's response in Firebase
+    const db = getDatabase();
+    const userMessagesRef = db.ref(`users/${userUID}/messages/italian`);
+
+    // Ensure we're not duplicating messages
+    const snapshot = await userMessagesRef.once("value");
+    const currentMessages = snapshot.val();
+    const currentMessagesArray = currentMessages
+      ? Object.values(currentMessages)
+      : [];
+
+    if (!currentMessagesArray.some((msg) => msg.message === assistantMessage)) {
+      await userMessagesRef.push({
+        sender: "assistant",
+        message: assistantMessage,
+        timestamp: Date.now(),
+      });
+    } else {
+      console.log("Duplicate message detected; skipping save.");
+    }
+
+    res.json({ message: assistantMessage });
+  } catch (error) {
+    console.error("Error during OpenAI API request:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
 
 router.post("/audio", async (req, res) => {
   const { userUID, message } = req.body;

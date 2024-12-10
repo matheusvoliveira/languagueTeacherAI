@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import TeacherBot from "./pages/TeacherBot";
+import TeacherBotEng from "../src/pages/chats/TeacherBotEng";
+import TeacherBotIta from "../src/pages/chats/TeacherBotIta";
 import LoginSignup from "./pages/Login/LoginSignup";
 import Prices from "./pages/prices/Prices";
 import Success from "./pages/Success";
@@ -38,8 +39,9 @@ function App() {
           {/* Public routes */}
           <Route
             path="/login"
-            element={user ? <Navigate to="/chat" /> : <LoginSignup />}
+            element={user ? <Navigate to="/chat-eng" /> : <LoginSignup />}
           />
+           <Route path="/chat-ita" element={<TeacherBotIta />} />
           <Route path="/signup" element={<LoginSignup />} />
           <Route path="/reset" element={<ForgotPassword />} />
           <Route path="/planos" element={<Prices />} />
@@ -48,14 +50,20 @@ function App() {
 
           {/* Protected routes */}
           <Route
-            path="/chat"
-            element={user ? <TeacherBot /> : <Navigate to="/login" />}
+            path="/chat-eng"
+            element={user ? <TeacherBotEng /> : <Navigate to="/login" />}
           />
 
+          <Route
+            path="/chat-eng"
+            element={user ? <TeacherBotIta /> : <Navigate to="/login" />}
+          />
           {/* Catch-all route */}
           <Route
             path="*"
-            element={user ? <Navigate to="/chat" /> : <Navigate to="/login" />}
+            element={
+              user ? <Navigate to="/chat-eng" /> : <Navigate to="/login" />
+            }
           />
         </Routes>
       </BrowserRouter>

@@ -1,17 +1,17 @@
 import "./App.css";
 import React, { useState, useEffect, useRef } from "react";
-import firebase from "../firebase/firebaseConfig";
+import firebase from "../../firebase/firebaseConfig";
 import axios from "axios";
 import { IoSendSharp } from "react-icons/io5";
 import { FaMicrophone } from "react-icons/fa";
-import ChatMessage from "./ChatMessage";
+import ChatMessage from "../ChatMessage";
 
-const TeacherBot = () => {
+const TeacherBotIta = () => {
   const [input, setInput] = useState("");
   const [chatLog, setChatLog] = useState([
     {
       user: "gpt",
-      message: "I'm Nathan, your English teacher. How can I help you today?",
+      message: "Sono Nathan, il tuo insegnante di italiano. Come posso aiutarti oggi?",
     },
   ]);
   const [transcript, setTranscript] = useState("");
@@ -81,27 +81,27 @@ const TeacherBot = () => {
   };
 
   // Load messages from Firebase on component mount
-  useEffect(() => {
-    const userUID = firebase.auth().currentUser?.uid;
+  // useEffect(() => {
+  //   const userUID = firebase.auth().currentUser?.uid;
 
-    if (userUID) {
-      const userMessagesRef = firebase
-        .database()
-        .ref(`users/${userUID}/messages`);
-      const handleValueChange = (snapshot) => {
-        const messages = snapshot.val();
-        const chatHistory = messages ? Object.values(messages) : [];
-        // Only update chatLog if it is empty, to avoid overwriting or duplicating messages
-        if (chatLog.length === 0) {
-          setChatLog(chatHistory);
-        }
-      };
+  //   if (userUID) {
+  //     const userMessagesRef = firebase
+  //       .database()
+  //       .ref(`users/${userUID}italian_messages`);
+  //     const handleValueChange = (snapshot) => {
+  //       const messages = snapshot.val();
+  //       const chatHistory = messages ? Object.values(messages) : [];
+  //       // Only update chatLog if it is empty, to avoid overwriting or duplicating messages
+  //       if (chatLog.length === 0) {
+  //         setChatLog(chatHistory);
+  //       }
+  //     };
 
-      userMessagesRef.on("value", handleValueChange);
+  //     userMessagesRef.on("value", handleValueChange);
 
-      return () => userMessagesRef.off("value", handleValueChange);
-    }
-  }, []);
+  //     return () => userMessagesRef.off("value", handleValueChange);
+  //   }
+  // }, []);
 
   const handleChange = (e) => {
     setInput(e.target.value);
@@ -134,7 +134,7 @@ const TeacherBot = () => {
 
   // Save message to Firebase
   const saveMessageToFirebase = (uid, message, sender) => {
-    const userMessagesRef = firebase.database().ref(`users/${uid}/messages`);
+    const userMessagesRef = firebase.database().ref(`users/${uid}/messages/italian`);
     const newMessageRef = userMessagesRef.push();
     newMessageRef.set({
       sender: sender,
@@ -154,19 +154,17 @@ const TeacherBot = () => {
 
       const userUID = firebase.auth().currentUser?.uid;
 
-      if (userUID) saveMessageToFirebase(userUID, input, "me"); // FIRST CALL: User message
+      // if (userUID) saveMessageToFirebase(userUID, input, "me"); // FIRST CALL: User message
 
+      
       try {
-        const response = await fetch(
-          "https://www.nathanai.com.br/api/chatgpt",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ message: input, userUID }),
-          }
-        );
+        const response = await fetch("http://localhost:8800/api/chatgpt/italian", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: input, userUID }),
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -198,7 +196,7 @@ const TeacherBot = () => {
 
       try {
         const response = await axios.post(
-          "https://www.nathanai.com.br/api/chatgpt/audio",
+          "https://www.nathanai.com.br/api/chatgpt/audio/esp",
           {
             message: transcript,
             userUID,
@@ -263,4 +261,4 @@ const TeacherBot = () => {
   );
 };
 
-export default TeacherBot;
+export default TeacherBotIta;
