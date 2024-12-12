@@ -6,12 +6,12 @@ import { IoSendSharp } from "react-icons/io5";
 import { FaMicrophone } from "react-icons/fa";
 import ChatMessage from "../ChatMessage";
 
-const TeacherBotIta = () => {
+const TeacherBotGerman = () => {
   const [input, setInput] = useState("");
   const [chatLog, setChatLog] = useState([
     {
       user: "gpt",
-      message: "Sono Nathan, il tuo insegnante di italiano. Come posso aiutarti oggi?",
+      message: "Hallo, ich bin Nathan, dein Deutschlehrer. Wie kann ich dir heute helfen?",
     },
   ]);
   const [transcript, setTranscript] = useState("");
@@ -134,7 +134,7 @@ const TeacherBotIta = () => {
 
   // Save message to Firebase
   const saveMessageToFirebase = (uid, message, sender) => {
-    const userMessagesRef = firebase.database().ref(`users/${uid}/messages/italian`);
+    const userMessagesRef = firebase.database().ref(`users/${uid}/messages/german`);
     const newMessageRef = userMessagesRef.push();
     newMessageRef.set({
       sender: sender,
@@ -158,7 +158,7 @@ const TeacherBotIta = () => {
 
       
       try {
-        const response = await fetch("http://localhost:8800/api/chatgpt/italian", {
+        const response = await fetch("http://localhost:8800/api/chatgpt/german", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -183,7 +183,7 @@ const TeacherBotIta = () => {
     }
   };
 
-  // Handle audio message submission
+//   // Handle audio message submission
   const handleAudio = async () => {
     if (transcript.trim()) {
       const chatLogNew = [...chatLog, { sender: "me", message: transcript }];
@@ -246,14 +246,14 @@ const TeacherBotIta = () => {
             <button onClick={handleSubmit} className="chat-send-button">
               <IoSendSharp style={{ color: "white" }} />
             </button>
-            <button onClick={handleClick} className="chat-send-button">
+            {/* <button onClick={handleClick} className="chat-send-button">
               <FaMicrophone style={{ color: listening ? "red" : "white" }} />
             </button>
             <div
               className="transcript"
               style={{ position: "absolute", left: "-9999px" }} // Move o conteúdo para fora da tela
               dangerouslySetInnerHTML={{ __html: transcript }}
-            />
+            /> */}
           </div>
         </div>
       </section>
@@ -261,4 +261,4 @@ const TeacherBotIta = () => {
   );
 };
 
-export default TeacherBotIta;
+export default TeacherBotGerman;

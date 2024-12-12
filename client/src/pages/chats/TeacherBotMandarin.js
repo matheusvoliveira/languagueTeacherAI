@@ -6,12 +6,12 @@ import { IoSendSharp } from "react-icons/io5";
 import { FaMicrophone } from "react-icons/fa";
 import ChatMessage from "../ChatMessage";
 
-const TeacherBotEng = () => {
+const TeacherBotMandarin = () => {
   const [input, setInput] = useState("");
   const [chatLog, setChatLog] = useState([
     {
       user: "gpt",
-      message: "I'm Nathan, your English teacher. How can I help you today?",
+      message: "你好，我是你的中文老师Nathan。今天我能帮你什么？",
     },
   ]);
   const [transcript, setTranscript] = useState("");
@@ -87,7 +87,7 @@ const TeacherBotEng = () => {
   //   if (userUID) {
   //     const userMessagesRef = firebase
   //       .database()
-  //       .ref(`users/${userUID}/messages`);
+  //       .ref(`users/${userUID}italian_messages`);
   //     const handleValueChange = (snapshot) => {
   //       const messages = snapshot.val();
   //       const chatHistory = messages ? Object.values(messages) : [];
@@ -134,7 +134,7 @@ const TeacherBotEng = () => {
 
   // Save message to Firebase
   const saveMessageToFirebase = (uid, message, sender) => {
-    const userMessagesRef = firebase.database().ref(`users/${uid}/messages`);
+    const userMessagesRef = firebase.database().ref(`users/${uid}/messages/mandarin`);
     const newMessageRef = userMessagesRef.push();
     newMessageRef.set({
       sender: sender,
@@ -158,7 +158,7 @@ const TeacherBotEng = () => {
 
       
       try {
-        const response = await fetch("http://localhost:8800/api/chatgpt", {
+        const response = await fetch("http://localhost:8800/api/chatgpt/mandarin", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -174,7 +174,7 @@ const TeacherBotEng = () => {
 
         setChatLog([...chatLogNew, { user: "gpt", message: gptMessage }]);
 
-        // if (userUID) saveMessageToFirebase(userUID, gptMessage, "gpt"); // SECOND CALL: AI response
+        if (userUID) saveMessageToFirebase(userUID, gptMessage, "gpt"); // SECOND CALL: AI response
       } catch (error) {
         console.error(error);
       } finally {
@@ -183,7 +183,7 @@ const TeacherBotEng = () => {
     }
   };
 
-  // Handle audio message submission
+//   // Handle audio message submission
   const handleAudio = async () => {
     if (transcript.trim()) {
       const chatLogNew = [...chatLog, { sender: "me", message: transcript }];
@@ -196,7 +196,7 @@ const TeacherBotEng = () => {
 
       try {
         const response = await axios.post(
-          "https://www.nathanai.com.br/api/chatgpt/audio",
+          "https://www.nathanai.com.br/api/chatgpt/audio/esp",
           {
             message: transcript,
             userUID,
@@ -246,14 +246,14 @@ const TeacherBotEng = () => {
             <button onClick={handleSubmit} className="chat-send-button">
               <IoSendSharp style={{ color: "white" }} />
             </button>
-            <button onClick={handleClick} className="chat-send-button">
+            {/* <button onClick={handleClick} className="chat-send-button">
               <FaMicrophone style={{ color: listening ? "red" : "white" }} />
             </button>
             <div
               className="transcript"
               style={{ position: "absolute", left: "-9999px" }} // Move o conteúdo para fora da tela
               dangerouslySetInnerHTML={{ __html: transcript }}
-            />
+            /> */}
           </div>
         </div>
       </section>
@@ -261,4 +261,4 @@ const TeacherBotEng = () => {
   );
 };
 
-export default TeacherBotEng;
+export default TeacherBotMandarin;

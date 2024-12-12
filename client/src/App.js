@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import TeacherBotEng from "../src/pages/chats/TeacherBotEng";
-import TeacherBotIta from "../src/pages/chats/TeacherBotIta";
+import TeacherBotEnglish from "./pages/chats/TeacherBotEnglish";
+import TeacherBotFrench from "./pages/chats/TeacherBotFrench";
+import TeacherBotGerman from "./pages/chats/TeacherBotGerman";
+import TeacherBotItalian from "./pages/chats/TeacherBotItalian";
+import TeacherBotJapanese from "./pages/chats/TeacherBotJapanese";
+import TeacherBotKorean from "./pages/chats/TeacherBotKorean";
+import TeacherBotMandarin from "./pages/chats/TeacherBotMandarin";
+import TeacherBotPortuguese from "./pages/chats/TeacherBotPortuguese";
+import TeacherBotSpanish from "./pages/chats/TeacherBotSpanish";
+import TeacherBotArabic from "./pages/chats/TeacherBotArabic";
+
 import LoginSignup from "./pages/Login/LoginSignup";
 import Prices from "./pages/prices/Prices";
 import Success from "./pages/Success";
@@ -27,10 +36,10 @@ function App() {
     return () => unsubscribe(); // Cleanup the listener on unmount
   }, []);
 
-  // if (loading) {
-  //   // While checking for user authentication state, show a loading spinner or message
-  //   return <div>Loading...</div>;
-  // }
+  if (loading) {
+    // Show a loading spinner or message while checking authentication
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="App">
@@ -39,30 +48,61 @@ function App() {
           {/* Public routes */}
           <Route
             path="/login"
-            element={user ? <Navigate to="/chat-eng" /> : <LoginSignup />}
+            element={user ? <Navigate to="/chat-english" /> : <LoginSignup />}
           />
-           <Route path="/chat-ita" element={<TeacherBotIta />} />
           <Route path="/signup" element={<LoginSignup />} />
           <Route path="/reset" element={<ForgotPassword />} />
           <Route path="/planos" element={<Prices />} />
           <Route path="/success" element={<Success />} />
           <Route path="/cancel" element={<Cancel />} />
 
-          {/* Protected routes */}
+          {/* Protected chat routes */}
           <Route
-            path="/chat-eng"
-            element={user ? <TeacherBotEng /> : <Navigate to="/login" />}
+            path="/chat-english"
+            element={user ? <TeacherBotEnglish /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/chat-french"
+            element={user ? <TeacherBotFrench /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/chat-german"
+            element={user ? <TeacherBotGerman /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/chat-italian"
+            element={user ? <TeacherBotItalian /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/chat-japanese"
+            element={user ? <TeacherBotJapanese /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/chat-korean"
+            element={user ? <TeacherBotKorean /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/chat-portuguese"
+            element={user ? <TeacherBotPortuguese /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/chat-spanish"
+            element={user ? <TeacherBotSpanish /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/chat-arabic"
+            element={user ? <TeacherBotArabic /> : <Navigate to="/login" />}
+          />
+            <Route
+            path="/chat-mandarin"
+            element={user ? <TeacherBotMandarin /> : <Navigate to="/login" />}
           />
 
-          <Route
-            path="/chat-eng"
-            element={user ? <TeacherBotIta /> : <Navigate to="/login" />}
-          />
           {/* Catch-all route */}
           <Route
             path="*"
             element={
-              user ? <Navigate to="/chat-eng" /> : <Navigate to="/login" />
+              user ? <Navigate to="/chat-english" /> : <Navigate to="/login" />
             }
           />
         </Routes>

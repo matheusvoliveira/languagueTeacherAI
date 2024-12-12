@@ -145,6 +145,409 @@ router.post("/italian", async (req, res) => {
 });
 
 
+router.post("/spanish", async (req, res) => {
+  const { userUID, message } = req.body;
+  const language_path = 'spanish'
+  try {
+    // Get user messages from Firebase
+    const userMessages = await getUserMessagesFromFirebase(userUID, language_path);
+
+    // Add new message to the chat history
+    userMessages.push({ role: "user", content: message });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [createSystemMessage("spanish"), ...userMessages],
+      max_tokens: 100,
+      temperature: 1.0,
+    });
+
+    const assistantMessage = completion.choices[0].message.content;
+
+    // Store assistant's response in Firebase
+    const db = getDatabase();
+    const userMessagesRef = db.ref(`users/${userUID}/messages/spanish`);
+
+    // Ensure we're not duplicating messages
+    const snapshot = await userMessagesRef.once("value");
+    const currentMessages = snapshot.val();
+    const currentMessagesArray = currentMessages
+      ? Object.values(currentMessages)
+      : [];
+
+    if (!currentMessagesArray.some((msg) => msg.message === assistantMessage)) {
+      await userMessagesRef.push({
+        sender: "assistant",
+        message: assistantMessage,
+        timestamp: Date.now(),
+      });
+    } else {
+      console.log("Duplicate message detected; skipping save.");
+    }
+
+    res.json({ message: assistantMessage });
+  } catch (error) {
+    console.error("Error during OpenAI API request:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
+
+router.post("/french", async (req, res) => {
+  const { userUID, message } = req.body;
+  const language_path = 'french'
+  try {
+    // Get user messages from Firebase
+    const userMessages = await getUserMessagesFromFirebase(userUID, language_path);
+
+    // Add new message to the chat history
+    userMessages.push({ role: "user", content: message });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [createSystemMessage("french"), ...userMessages],
+      max_tokens: 100,
+      temperature: 1.0,
+    });
+
+    const assistantMessage = completion.choices[0].message.content;
+
+    // Store assistant's response in Firebase
+    const db = getDatabase();
+    const userMessagesRef = db.ref(`users/${userUID}/messages/french`);
+
+    // Ensure we're not duplicating messages
+    const snapshot = await userMessagesRef.once("value");
+    const currentMessages = snapshot.val();
+    const currentMessagesArray = currentMessages
+      ? Object.values(currentMessages)
+      : [];
+
+    if (!currentMessagesArray.some((msg) => msg.message === assistantMessage)) {
+      await userMessagesRef.push({
+        sender: "assistant",
+        message: assistantMessage,
+        timestamp: Date.now(),
+      });
+    } else {
+      console.log("Duplicate message detected; skipping save.");
+    }
+
+    res.json({ message: assistantMessage });
+  } catch (error) {
+    console.error("Error during OpenAI API request:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
+
+router.post("/korean", async (req, res) => {
+  const { userUID, message } = req.body;
+  const language_path = 'korean'
+  try {
+    // Get user messages from Firebase
+    const userMessages = await getUserMessagesFromFirebase(userUID, language_path);
+
+    // Add new message to the chat history
+    userMessages.push({ role: "user", content: message });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [createSystemMessage("korean"), ...userMessages],
+      max_tokens: 100,
+      temperature: 1.0,
+    });
+
+    const assistantMessage = completion.choices[0].message.content;
+
+    // Store assistant's response in Firebase
+    const db = getDatabase();
+    const userMessagesRef = db.ref(`users/${userUID}/messages/korean`);
+
+    // Ensure we're not duplicating messages
+    const snapshot = await userMessagesRef.once("value");
+    const currentMessages = snapshot.val();
+    const currentMessagesArray = currentMessages
+      ? Object.values(currentMessages)
+      : [];
+
+    if (!currentMessagesArray.some((msg) => msg.message === assistantMessage)) {
+      await userMessagesRef.push({
+        sender: "assistant",
+        message: assistantMessage,
+        timestamp: Date.now(),
+      });
+    } else {
+      console.log("Duplicate message detected; skipping save.");
+    }
+
+    res.json({ message: assistantMessage });
+  } catch (error) {
+    console.error("Error during OpenAI API request:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
+
+
+router.post("/portuguese", async (req, res) => {
+  const { userUID, message } = req.body;
+  const language_path = 'portuguese'
+  try {
+    // Get user messages from Firebase
+    const userMessages = await getUserMessagesFromFirebase(userUID, language_path);
+
+    // Add new message to the chat history
+    userMessages.push({ role: "user", content: message });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [createSystemMessage("portuguese"), ...userMessages],
+      max_tokens: 100,
+      temperature: 1.0,
+    });
+
+    const assistantMessage = completion.choices[0].message.content;
+
+    // Store assistant's response in Firebase
+    const db = getDatabase();
+    const userMessagesRef = db.ref(`users/${userUID}/messages/portuguese`);
+
+    // Ensure we're not duplicating messages
+    const snapshot = await userMessagesRef.once("value");
+    const currentMessages = snapshot.val();
+    const currentMessagesArray = currentMessages
+      ? Object.values(currentMessages)
+      : [];
+
+    if (!currentMessagesArray.some((msg) => msg.message === assistantMessage)) {
+      await userMessagesRef.push({
+        sender: "assistant",
+        message: assistantMessage,
+        timestamp: Date.now(),
+      });
+    } else {
+      console.log("Duplicate message detected; skipping save.");
+    }
+
+    res.json({ message: assistantMessage });
+  } catch (error) {
+    console.error("Error during OpenAI API request:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
+
+router.post("/mandarin", async (req, res) => {
+  const { userUID, message } = req.body;
+  const language_path = 'mandarin'
+  try {
+    // Get user messages from Firebase
+    const userMessages = await getUserMessagesFromFirebase(userUID, language_path);
+
+    // Add new message to the chat history
+    userMessages.push({ role: "user", content: message });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [createSystemMessage("mandarin"), ...userMessages],
+      max_tokens: 100,
+      temperature: 1.0,
+    });
+
+    const assistantMessage = completion.choices[0].message.content;
+
+    // Store assistant's response in Firebase
+    const db = getDatabase();
+    const userMessagesRef = db.ref(`users/${userUID}/messages/mandarin`);
+
+    // Ensure we're not duplicating messages
+    const snapshot = await userMessagesRef.once("value");
+    const currentMessages = snapshot.val();
+    const currentMessagesArray = currentMessages
+      ? Object.values(currentMessages)
+      : [];
+
+    if (!currentMessagesArray.some((msg) => msg.message === assistantMessage)) {
+      await userMessagesRef.push({
+        sender: "assistant",
+        message: assistantMessage,
+        timestamp: Date.now(),
+      });
+    } else {
+      console.log("Duplicate message detected; skipping save.");
+    }
+
+    res.json({ message: assistantMessage });
+  } catch (error) {
+    console.error("Error during OpenAI API request:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
+
+router.post("/german", async (req, res) => {
+  const { userUID, message } = req.body;
+  const language_path = 'german'
+  try {
+    // Get user messages from Firebase
+    const userMessages = await getUserMessagesFromFirebase(userUID, language_path);
+
+    // Add new message to the chat history
+    userMessages.push({ role: "user", content: message });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [createSystemMessage("german"), ...userMessages],
+      max_tokens: 100,
+      temperature: 1.0,
+    });
+
+    const assistantMessage = completion.choices[0].message.content;
+
+    // Store assistant's response in Firebase
+    const db = getDatabase();
+    const userMessagesRef = db.ref(`users/${userUID}/messages/german`);
+
+    // Ensure we're not duplicating messages
+    const snapshot = await userMessagesRef.once("value");
+    const currentMessages = snapshot.val();
+    const currentMessagesArray = currentMessages
+      ? Object.values(currentMessages)
+      : [];
+
+    if (!currentMessagesArray.some((msg) => msg.message === assistantMessage)) {
+      await userMessagesRef.push({
+        sender: "assistant",
+        message: assistantMessage,
+        timestamp: Date.now(),
+      });
+    } else {
+      console.log("Duplicate message detected; skipping save.");
+    }
+
+    res.json({ message: assistantMessage });
+  } catch (error) {
+    console.error("Error during OpenAI API request:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
+
+router.post("/japanese", async (req, res) => {
+  const { userUID, message } = req.body;
+  const language_path = 'japanese'
+  try {
+    // Get user messages from Firebase
+    const userMessages = await getUserMessagesFromFirebase(userUID, language_path);
+
+    // Add new message to the chat history
+    userMessages.push({ role: "user", content: message });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [createSystemMessage("japanese"), ...userMessages],
+      max_tokens: 100,
+      temperature: 1.0,
+    });
+
+    const assistantMessage = completion.choices[0].message.content;
+
+    // Store assistant's response in Firebase
+    const db = getDatabase();
+    const userMessagesRef = db.ref(`users/${userUID}/messages/japanese`);
+
+    // Ensure we're not duplicating messages
+    const snapshot = await userMessagesRef.once("value");
+    const currentMessages = snapshot.val();
+    const currentMessagesArray = currentMessages
+      ? Object.values(currentMessages)
+      : [];
+
+    if (!currentMessagesArray.some((msg) => msg.message === assistantMessage)) {
+      await userMessagesRef.push({
+        sender: "assistant",
+        message: assistantMessage,
+        timestamp: Date.now(),
+      });
+    } else {
+      console.log("Duplicate message detected; skipping save.");
+    }
+
+    res.json({ message: assistantMessage });
+  } catch (error) {
+    console.error("Error during OpenAI API request:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
+router.post("/arabic", async (req, res) => {
+  const { userUID, message } = req.body;
+  const language_path = 'arabic'
+  try {
+    // Get user messages from Firebase
+    const userMessages = await getUserMessagesFromFirebase(userUID, language_path);
+
+    // Add new message to the chat history
+    userMessages.push({ role: "user", content: message });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [createSystemMessage("arabic"), ...userMessages],
+      max_tokens: 100,
+      temperature: 1.0,
+    });
+
+    const assistantMessage = completion.choices[0].message.content;
+
+    // Store assistant's response in Firebase
+    const db = getDatabase();
+    const userMessagesRef = db.ref(`users/${userUID}/messages/arabic`);
+
+    // Ensure we're not duplicating messages
+    const snapshot = await userMessagesRef.once("value");
+    const currentMessages = snapshot.val();
+    const currentMessagesArray = currentMessages
+      ? Object.values(currentMessages)
+      : [];
+
+    if (!currentMessagesArray.some((msg) => msg.message === assistantMessage)) {
+      await userMessagesRef.push({
+        sender: "assistant",
+        message: assistantMessage,
+        timestamp: Date.now(),
+      });
+    } else {
+      console.log("Duplicate message detected; skipping save.");
+    }
+
+    res.json({ message: assistantMessage });
+  } catch (error) {
+    console.error("Error during OpenAI API request:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request." });
+  }
+});
+
+
+
+
+
 router.post("/audio", async (req, res) => {
   const { userUID, message } = req.body;
 
