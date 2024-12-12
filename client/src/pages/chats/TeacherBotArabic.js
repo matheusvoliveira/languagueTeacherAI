@@ -11,7 +11,8 @@ const TeacherBotArabic = () => {
   const [chatLog, setChatLog] = useState([
     {
       user: "gpt",
-      message: "مرحباً، أنا ناثان، معلمك للغة العربية. كيف يمكنني مساعدتك اليوم؟",
+      message:
+        "مرحباً، أنا ناثان، معلمك للغة العربية. كيف يمكنني مساعدتك اليوم؟",
     },
   ]);
   const [transcript, setTranscript] = useState("");
@@ -125,8 +126,13 @@ const TeacherBotArabic = () => {
 
   // Scroll to bottom when chatLog updates
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatLog]);
+    // Scroll to bottom when chatLog updates
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth", // For smooth scrolling
+      block: "end", // Ensures it scrolls to the bottom of the container
+    });
+  }, [chatLog]); // This will trigger every time the chatLog changes
+  
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -134,7 +140,9 @@ const TeacherBotArabic = () => {
 
   // Save message to Firebase
   const saveMessageToFirebase = (uid, message, sender) => {
-    const userMessagesRef = firebase.database().ref(`users/${uid}/messages/arabic`);
+    const userMessagesRef = firebase
+      .database()
+      .ref(`users/${uid}/messages/arabic`);
     const newMessageRef = userMessagesRef.push();
     newMessageRef.set({
       sender: sender,
@@ -156,15 +164,17 @@ const TeacherBotArabic = () => {
 
       // if (userUID) saveMessageToFirebase(userUID, input, "me"); // FIRST CALL: User message
 
-      
       try {
-        const response = await fetch("http://localhost:8800/api/chatgpt/arabic", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message: input, userUID }),
-        });
+        const response = await fetch(
+          "https://www.nathanai.com.br/api/chatgpt/arabic",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ message: input, userUID }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -183,7 +193,7 @@ const TeacherBotArabic = () => {
     }
   };
 
-//   // Handle audio message submission
+  //   // Handle audio message submission
   const handleAudio = async () => {
     if (transcript.trim()) {
       const chatLogNew = [...chatLog, { sender: "me", message: transcript }];
@@ -218,6 +228,7 @@ const TeacherBotArabic = () => {
       }
     }
   };
+  
 
   return (
     <div className="App">

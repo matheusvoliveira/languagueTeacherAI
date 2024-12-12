@@ -11,7 +11,8 @@ const TeacherBotSpanish = () => {
   const [chatLog, setChatLog] = useState([
     {
       user: "gpt",
-      message: "Hola. Soy Nathan, tu profesor de español. ¿Cómo puedo ayudarte hoy?",
+      message:
+        "Hola. Soy Nathan, tu profesor de español. ¿Cómo puedo ayudarte hoy?",
     },
   ]);
   const [transcript, setTranscript] = useState("");
@@ -134,7 +135,9 @@ const TeacherBotSpanish = () => {
 
   // Save message to Firebase
   const saveMessageToFirebase = (uid, message, sender) => {
-    const userMessagesRef = firebase.database().ref(`users/${uid}/messages/spanish`);
+    const userMessagesRef = firebase
+      .database()
+      .ref(`users/${uid}/messages/spanish`);
     const newMessageRef = userMessagesRef.push();
     newMessageRef.set({
       sender: sender,
@@ -156,15 +159,17 @@ const TeacherBotSpanish = () => {
 
       // if (userUID) saveMessageToFirebase(userUID, input, "me"); // FIRST CALL: User message
 
-      
       try {
-        const response = await fetch("http://localhost:8800/api/chatgpt/spanish", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message: input, userUID }),
-        });
+        const response = await fetch(
+          "https://www.nathanai.com.br/api/chatgpt/spanish",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ message: input, userUID }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -183,7 +188,7 @@ const TeacherBotSpanish = () => {
     }
   };
 
-//   // Handle audio message submission
+  //   // Handle audio message submission
   const handleAudio = async () => {
     if (transcript.trim()) {
       const chatLogNew = [...chatLog, { sender: "me", message: transcript }];

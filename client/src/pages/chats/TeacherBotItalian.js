@@ -158,7 +158,7 @@ const TeacherBotItalian = () => {
 
       
       try {
-        const response = await fetch("http://localhost:8800/api/chatgpt/italian", {
+        const response = await fetch( "https://www.nathanai.com.br/api/chatgpt/italian", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

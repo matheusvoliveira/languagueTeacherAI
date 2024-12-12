@@ -156,15 +156,17 @@ const TeacherBotEng = () => {
 
       // if (userUID) saveMessageToFirebase(userUID, input, "me"); // FIRST CALL: User message
 
-      
       try {
-        const response = await fetch("http://localhost:8800/api/chatgpt", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message: input, userUID }),
-        });
+        const response = await fetch(
+          "https://www.nathanai.com.br/api/chatgpt",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ message: input, userUID }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

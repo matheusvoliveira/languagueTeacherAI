@@ -10,11 +10,11 @@ import TeacherBotMandarin from "./pages/chats/TeacherBotMandarin";
 import TeacherBotPortuguese from "./pages/chats/TeacherBotPortuguese";
 import TeacherBotSpanish from "./pages/chats/TeacherBotSpanish";
 import TeacherBotArabic from "./pages/chats/TeacherBotArabic";
-
 import LoginSignup from "./pages/Login/LoginSignup";
 import Prices from "./pages/prices/Prices";
 import Success from "./pages/Success";
 import Cancel from "./pages/Cancel";
+import HomePage from "./pages/home/HomePage";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import firebase from "./firebase/firebaseConfig"; // Assuming firebase is configured here
 
@@ -55,6 +55,7 @@ function App() {
           <Route path="/planos" element={<Prices />} />
           <Route path="/success" element={<Success />} />
           <Route path="/cancel" element={<Cancel />} />
+          <Route path="/home" element={<HomePage />} />
 
           {/* Protected chat routes */}
           <Route
@@ -102,7 +103,7 @@ function App() {
           <Route
             path="*"
             element={
-              user ? <Navigate to="/chat-english" /> : <Navigate to="/login" />
+              user ? <Navigate to="/home" /> : <Navigate to="/login" />
             }
           />
         </Routes>

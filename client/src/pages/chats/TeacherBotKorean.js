@@ -158,7 +158,7 @@ const TeacherBotKorean = () => {
 
       
       try {
-        const response = await fetch("http://localhost:8800/api/chatgpt/korean", {
+        const response = await fetch( "https://www.nathanai.com.br/api/chatgpt/korean", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

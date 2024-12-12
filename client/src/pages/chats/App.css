@@ -59,6 +59,17 @@
   }
 }
 
+@media (max-width: 768px) {
+    .chat-log {
+      max-height: 60vh; /* Adjust the max-height on smaller screens */
+    }
+  
+    .chat-input-holder {
+      width: 100%;
+      padding: 10px;
+    }
+  }
+  
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -89,7 +100,10 @@
   overflow-y: auto;
   padding-bottom: 80px; 
   max-height: calc(100vh - 140px); 
+  
 }
+
+
 
 .chat-input-holder {
   display: flex;

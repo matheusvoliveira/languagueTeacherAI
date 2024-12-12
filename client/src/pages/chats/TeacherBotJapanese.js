@@ -158,7 +158,7 @@ const TeacherBotJapanese = () => {
 
       
       try {
-        const response = await fetch("http://localhost:8800/api/chatgpt/japanese", {
+        const response = await fetch( "https://www.nathanai.com.br/api/chatgpt/japanese", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -196,7 +196,7 @@ const TeacherBotJapanese = () => {
 
       try {
         const response = await axios.post(
-          "https://www.nathanai.com.br/api/chatgpt/audio/esp",
+           "https://www.nathanai.com.br/api/chatgpt/audio/esp",
           {
             message: transcript,
             userUID,
