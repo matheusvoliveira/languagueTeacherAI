@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import firebase from "../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { apiBaseUrl } from "../config/api";
 
 
 const Success = () => {
@@ -29,7 +30,7 @@ const Success = () => {
   console.log(sessionId)
 
   const axiosInstance = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    baseURL: apiBaseUrl,
   });
 
  

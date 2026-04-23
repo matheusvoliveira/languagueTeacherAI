@@ -5,6 +5,7 @@ import axios from "axios";
 import { IoSendSharp } from "react-icons/io5";
 import { FaMicrophone } from "react-icons/fa";
 import ChatMessage from "../ChatMessage";
+import { apiUrl } from "../../config/api";
 
 const TeacherBotArabic = () => {
   const [input, setInput] = useState("");
@@ -166,7 +167,7 @@ const TeacherBotArabic = () => {
 
       try {
         const response = await fetch(
-          "https://www.nathanai.com.br/api/chatgpt/arabic",
+          apiUrl("/api/chatgpt/arabic"),
           {
             method: "POST",
             headers: {
@@ -206,7 +207,7 @@ const TeacherBotArabic = () => {
 
       try {
         const response = await axios.post(
-          "https://www.nathanai.com.br/api/chatgpt/audio/esp",
+          apiUrl("/api/chatgpt/audio/esp"),
           {
             message: transcript,
             userUID,

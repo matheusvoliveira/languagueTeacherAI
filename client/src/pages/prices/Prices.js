@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import firebase from "../../firebase/firebaseConfig";
 import "./Prices.css";
-import axios from "axios"
+import { apiUrl } from "../../config/api";
 
 const data = [
   {
@@ -46,21 +46,29 @@ const Home = () => {
 
   const checkout = async (plan) => {
     try {
-      const response = await fetch('https://www.nathanai.com.br/api/v1/create-subscription-checkout-session', {
-        plan: plan,
-        customerId: userId
+      const response = await fetch(apiUrl("/api/v1/create-subscription-checkout-session"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plan,
+          customerId: userId,
+        }),
       });
-  
-      // Handle response data
-      const { session } = response.data;
+
+      if (!response.ok) {
+        throw new Error(`Checkout request failed with status ${response.status}`);
+      }
+
+      const { session } = await response.json();
       if (session && session.url) {
         window.location.href = session.url;
       } else {
         throw new Error("Invalid session response");
       }
     } catch (error) {
-      // Handle error
-      console.error("Checkout error:", error.response?.data || error.message || 'An unknown error occurred');
+      console.error("Checkout error:", error.message || "An unknown error occurred");
     }
   };
   return (

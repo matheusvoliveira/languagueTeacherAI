@@ -1,84 +1,132 @@
-Language Teacher AI
+# 🌍 Language Teacher AI
 
-Overview
----------
-Language Teacher AI is an interactive language instruction system built with Node.js for the backend and React for the frontend. Powered by OpenAI's GPT-4 API, this chatbot offers personalized language instruction, including grammar corrections, vocabulary enhancement, and engaging conversation practice. The application is designed to provide a natural and interactive learning experience, making users feel like they are conversing with knowledgeable and friendly language teachers.
+Practice languages with an AI tutor built with **React**, **Node.js**, **OpenAI**, **Firebase**, and **Stripe**.
 
-Features
----------
-- Personalized Language Instruction: Engages users in real-time conversations, offering corrections and explanations in a natural, personable manner.
-- Real-Time Feedback: Detects and corrects grammatical, vocabulary, and usage mistakes with detailed explanations.
-- Interactive Chat Interface: Built with React for a smooth and responsive user experience.
-- Customizable Personality: Designed to interact as real people with preferences, opinions, and a friendly demeanor.
+## ✨ What It Does
 
-Installation
--------------
-Prerequisites
-- Node.js: Ensure Node.js is installed. You can download it from https://nodejs.org/.
+- 💬 Real-time chat practice in multiple languages
+- 🧠 Grammar correction and guided conversation
+- 🔐 Firebase authentication and user data storage
+- 💳 Stripe subscription flow
+- 🎙️ Audio reply support in part of the chat flow
 
-Setup
-1. Clone the Repository
-   git clone https://github.com/your-username/your-repository.git
-   cd your-repository
+## 🧱 Project Structure
 
-2. Backend Setup
-   Navigate to the backend directory and install dependencies:
-   cd backend
-   npm install
+```text
+.
+├── client/   # React frontend
+└── server/   # Express API, OpenAI, Firebase Admin, Stripe
+```
 
-   Create a .env file in the backend directory with the following content:
-   OPENAI_API_KEY=your-openai-api-key
-   ORGANIZATION_ID=your-organization-id
+## 🚀 Tech Stack
 
-   Replace your-openai-api-key and your-organization-id with your actual OpenAI API key and organization ID.
+- Frontend: React
+- Backend: Express
+- AI: OpenAI API
+- Auth/Database: Firebase
+- Payments: Stripe
 
-3. Frontend Setup
-   Navigate to the frontend directory and install dependencies:
-   cd ../frontend
-   npm install
+## ⚙️ Environment Setup
 
-4. Start the Development Servers
-   In the backend directory, start the Node.js server:
-   npm start
+This repository no longer stores private credentials in source control. Use local `.env` files instead.
 
-   In a separate terminal, navigate to the frontend directory and start the React development server:
-   npm start
+### `server/.env`
 
-   The frontend will be accessible at http://localhost:3000, and the backend API will be running on http://localhost:3001.
+Use [`server/.env.example`](server/.env.example) as the template.
 
-Usage
-------
-1. Interact with the Chatbot
-   Open your browser and navigate to http://localhost:3000. Type your message in the chat input box and press enter to start interacting with the chatbot.
+Required values:
 
-2. Receiving Feedback
-   The chatbot will respond with personalized feedback and corrections. Responses are crafted to be constructive and educational, helping you learn from your mistakes.
+```env
+PORT=8800
+CLIENT_APP_URL=http://localhost:3000
+ALLOWED_ORIGINS=http://localhost:3000
 
-Contributing
--------------
-If you'd like to contribute to the Language Teacher AI, please follow these steps:
+OPENAI_API_KEY=your_openai_api_key
+STRIPE_SECRET_KEY=your_stripe_secret_key
+STRIPE_MONTHLY_PRICE_ID=price_xxx_monthly
+STRIPE_QUARTERLY_PRICE_ID=price_xxx_quarterly
 
-1. Fork the Repository
-2. Create a New Branch
-   git checkout -b feature/your-feature
-3. Commit Your Changes
-   git add .
-   git commit -m "Add your message"
-4. Push to Your Fork
-   git push origin feature/your-feature
-5. Create a Pull Request
-   Submit a pull request with a description of your changes.
+FIREBASE_DATABASE_URL=https://your-project-default-rtdb.firebaseio.com
+FIREBASE_SERVICE_ACCOUNT_PATH=./config/service-account.json
 
-License
--------
-This project is licensed under the MIT License - see the LICENSE file for details.
+DB_DIALECT=postgres
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=your_database_name
+DB_USER=your_database_user
+DB_PASSWORD=your_database_password
+```
 
-Contact
--------
-For questions or feedback, please reach out to your-email@example.com.
+You can also provide Firebase Admin credentials with `FIREBASE_SERVICE_ACCOUNT_JSON` instead of a local file path.
 
-Acknowledgements
-----------------
-- OpenAI for providing the GPT-4 API.
-- React for the frontend framework.
-- Node.js for the backend runtime.
+### `client/.env`
+
+Use [`client/.env.example`](client/.env.example) as the template.
+
+```env
+REACT_APP_API_URL=http://localhost:8800
+REACT_APP_FIREBASE_API_KEY=your_firebase_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+REACT_APP_FIREBASE_DATABASE_URL=https://your-project-default-rtdb.firebaseio.com
+REACT_APP_FIREBASE_PROJECT_ID=your-project-id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
+REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+## 🛠️ Run Locally
+
+### 1. Install dependencies
+
+```bash
+cd server
+npm install
+
+cd ../client
+npm install
+```
+
+### 2. Start the backend
+
+```bash
+cd server
+npm start
+```
+
+### 3. Start the frontend
+
+```bash
+cd client
+npm start
+```
+
+## 🔒 Security Notes
+
+- ✅ Removed versioned private Firebase Admin credentials
+- ✅ Removed hardcoded production domains and local machine endpoints from source files
+- ✅ Moved sensitive runtime values to environment variables
+- ✅ Ignored generated build output and secret config files
+
+## 🧪 Available Scripts
+
+### Server
+
+```bash
+npm start
+npm run dev
+```
+
+### Client
+
+```bash
+npm start
+npm run build
+npm test
+```
+
+## 📌 Notes
+
+- The frontend now reads API and Firebase settings from environment variables.
+- The backend now reads Firebase Admin, Stripe, CORS, app URL, and database settings from environment variables.
+- `client/build/` is treated as generated output and should be recreated with a fresh production build.

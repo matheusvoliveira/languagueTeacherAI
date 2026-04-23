@@ -5,6 +5,7 @@ import axios from "axios";
 import { IoSendSharp } from "react-icons/io5";
 import { FaMicrophone } from "react-icons/fa";
 import ChatMessage from "../ChatMessage";
+import { apiUrl } from "../../config/api";
 
 const TeacherBotMandarin = () => {
   const [input, setInput] = useState("");
@@ -158,7 +159,7 @@ const TeacherBotMandarin = () => {
 
       
       try {
-        const response = await fetch("http://localhost:8800/api/chatgpt/mandarin", {
+        const response = await fetch(apiUrl("/api/chatgpt/mandarin"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -196,7 +197,7 @@ const TeacherBotMandarin = () => {
 
       try {
         const response = await axios.post(
-          "https://www.nathanai.com.br/api/chatgpt/audio/esp",
+          apiUrl("/api/chatgpt/audio/esp"),
           {
             message: transcript,
             userUID,
